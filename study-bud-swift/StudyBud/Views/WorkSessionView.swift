@@ -1,5 +1,5 @@
 // Views/WorkSessionView.swift
-// test
+
 import SwiftUI
 
 struct WorkSessionView: View {
@@ -12,15 +12,25 @@ struct WorkSessionView: View {
 
     var body: some View {
         ZStack {
+            // ── 1) Full‐screen bedroom background ──
+//            Image("bedroom")
+//                .resizable()
+//                .scaledToFill()
+//                .ignoresSafeArea()
+
+            // ── 2) All other content lives in a VStack that respects safe areas ──
             VStack {
-                headerView
+                headerView   // this will automatically be placed below the notch
                 Spacer()
-                Image("CharacterAssetName")
-                  .resizable()
-                  .scaledToFit()
-                  .frame(maxHeight: 300)
-                  .padding(.horizontal)
+
+                Image("blueAtDesk")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: 300)
+                    .padding(.horizontal)
+
                 Spacer()
+
                 HStack(spacing: 40) {
                     CircleButton(iconName: "xmark", label: "Exit") {
                         showExitConfirm = true
@@ -35,13 +45,13 @@ struct WorkSessionView: View {
                 }
                 .padding(.bottom, 30)
             }
-            .animation(.default, value: isCompact)
+            // No .ignoresSafeArea here, so headerView will sit below the status bar/notch
 
-            // Exit confirmation
+            // ── 3) Exit confirmation dialog ──
             DialogView(
                 isPresented: $showExitConfirm,
                 message: "Are you sure you want to exit?",
-                characterImageName: "CharacterAssetName"
+                characterImageName: "blue"
             ) {
                 HStack(spacing: 24) {
                     Button("Yes") {
@@ -57,12 +67,12 @@ struct WorkSessionView: View {
                 }
             }
 
-            // Pause confirmation
+            // ── 4) Pause confirmation dialog ──
             DialogView(
                 isPresented: $showPausedDialog,
                 title: "Paused",
                 message: "Ok, but don’t take too long! Come back soon!",
-                characterImageName: "CharacterAssetName"
+                characterImageName: "blue"
             ) {
                 Button("Resume") {
                     vm.resume()
@@ -73,17 +83,18 @@ struct WorkSessionView: View {
         }
     }
 
+    // ── Header that automatically sits below the notch ──
     @ViewBuilder
     private var headerView: some View {
         if isCompact {
             HStack {
                 Spacer()
                 Text(vm.formattedTime)
-                   .font(.headline)
-                   .padding(.vertical, 6)
-                   .padding(.horizontal, 12)
-                   .background(.ultraThinMaterial)
-                   .cornerRadius(10)
+                    .font(.headline)
+                    .padding(.vertical, 6)
+                    .padding(.horizontal, 12)
+                    .background(Color.white.opacity(0.9))
+                    .cornerRadius(10)
 
                 Button {
                     isCompact = false
@@ -93,7 +104,8 @@ struct WorkSessionView: View {
                         .padding(.trailing, 12)
                 }
             }
-            .padding(.top)
+            .padding(.horizontal)
+            .padding(.top, 8)    // small extra padding under status bar
         } else {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
@@ -102,7 +114,8 @@ struct WorkSessionView: View {
                         .foregroundColor(.secondary)
 
                     Text(vm.formattedTime)
-                        .font(.title).bold()
+                        .font(.title)
+                        .bold()
 
                     Text("\(vm.percentComplete)% Complete")
                         .font(.caption)
@@ -112,7 +125,9 @@ struct WorkSessionView: View {
                         .scaleEffect(x: 1, y: 4, anchor: .center)
                         .clipShape(Capsule())
                 }
+
                 Spacer()
+
                 Button {
                     isCompact = true
                 } label: {
@@ -123,9 +138,18 @@ struct WorkSessionView: View {
                 .padding(.trailing, 12)
             }
             .padding()
-            .background(.ultraThinMaterial)
+            .background(Color.white.opacity(0.9))  // semi‑opaque white
             .cornerRadius(12)
             .padding(.horizontal)
+            .padding(.top, 8)   // small extra padding under status bar
         }
+    }
+}
+
+struct WorkSessionView_Previews: PreviewProvider {
+    static var previews: some View {
+        WorkSessionView(
+            vm: WorkSessionViewModel(taskName: "Read Chapter", durationMinutes: 1)
+        )
     }
 }

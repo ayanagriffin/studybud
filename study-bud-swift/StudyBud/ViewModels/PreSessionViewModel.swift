@@ -1,3 +1,5 @@
+// ViewModels/PreSessionViewModel.swift
+
 import Combine
 import SwiftUI
 
@@ -6,30 +8,79 @@ enum PreSessionStep {
 }
 
 class PreSessionViewModel: ObservableObject {
-    @Published var step: PreSessionStep = .chooseTask
+    // MARK: — Published state
+
+    @Published var step: PreSessionStep = .chooseTask {
+        didSet {
+            switch step {
+            case .chooseTask:
+                // As soon as we enter “chooseTask” step, pick one random task prompt
+                taskPrompt = DialogueManager.randomTaskPrompt()
+
+            case .chooseDuration:
+                // As soon as we enter “chooseDuration” step, pick one random duration prompt
+                durationPrompt = DialogueManager.randomDurationPrompt()
+
+            case .confirm:
+                // Nothing to do here—recapText drives UI in .confirm
+                break
+            }
+        }
+    }
+
+    /// When the user is entering a task, show exactly this string (set only once per step)
+    @Published private(set) var taskPrompt: String
+
+    /// When the user is entering a duration, show exactly this string (set only once per step)
+    @Published private(set) var durationPrompt: String = ""
+
     @Published var taskName: String = ""
     @Published var duration: Int?
     @Published var recapText: String?
     @Published var isLoadingRecap = false
+
+    /// Controls navigation into WorkSessionView
     @Published var isSessionActive = false
 
+    /// Holds the work session VM once the user confirms
+    var workVM: WorkSessionViewModel?
 
     private let store = SessionStore()
     private var cancellables = Set<AnyCancellable>()
-    
-    var workVM: WorkSessionViewModel?
 
+    // MARK: — Initializer
 
     init() {
-        // preload last session if any
+        // 1) Preload last session if any
         if let last = store.loadLast() {
             taskName = last.taskName
             duration = last.durationMinutes
         }
+
+        // 2) Since step starts at .chooseTask, initialize taskPrompt exactly once:
+        self.taskPrompt = DialogueManager.randomTaskPrompt()
     }
 
+    // MARK: — Computed property for “What to show in the speech bubble”
+
+    var promptText: String {
+        switch step {
+        case .chooseTask:
+            return taskPrompt
+
+        case .chooseDuration:
+            return durationPrompt
+
+        case .confirm:
+            // If recapText is nil, fall back to a generic string
+            return recapText ?? "Ready to rock?"
+        }
+    }
+
+    // MARK: — Helper to generate “recent tasks + presets” without duplicates
+
     var taskOptions: [String] {
-        // 1) Grab & de‑dupe recents
+        // 1) Grab & de‐dupe recents
         let recents = store
             .recentTasks
             .filter { !$0.isEmpty }
@@ -41,25 +92,24 @@ class PreSessionViewModel: ObservableObject {
 
         switch recents.count {
         case let n where n >= 2:
-            // two most recent
             return Array(recents.prefix(2))
 
         case 1:
-            // one recent → pick the other preset so we don’t duplicate
             let first = recents[0]
             let fallback = (first == "Homework" ? "Chores" : "Homework")
             return [first, fallback]
 
         default:
-            // no recents
             return ["Homework", "Chores"]
         }
     }
 
+    // MARK: — User actions
 
     func selectTask(_ name: String) {
         taskName = name
         step = .chooseDuration
+        // Setting step triggers didSet → sets durationPrompt once
     }
 
     func selectDuration(_ minutes: Int) {
@@ -71,6 +121,8 @@ class PreSessionViewModel: ObservableObject {
     private func generateRecap() {
 //        guard let dur = duration else { return }
 //        isLoadingRecap = true
+//
+//        // Example stubbed AI call—swap with your real AI client
 //        AIClient.shared
 //            .generateRecap(task: taskName, duration: dur)
 //            .receive(on: DispatchQueue.main)
@@ -84,26 +136,17 @@ class PreSessionViewModel: ObservableObject {
     }
 
     func confirmAndStart() {
-            guard let dur = duration else { return }
-            let settings = SessionSettings(taskName: taskName,
-                                           durationMinutes: dur)
-            store.save(settings: settings)
+        guard let dur = duration else { return }
 
-            // 1) Create the work session VM
-            let sessionVM = WorkSessionViewModel(taskName: taskName,
-                                                 durationMinutes: dur)
-            self.workVM = sessionVM
+        // 1) Persist the session
+        let settings = SessionSettings(taskName: taskName, durationMinutes: dur)
+        store.save(settings: settings)
 
-            // 2) Trigger SwiftUI navigation
-            isSessionActive = true
-        }
+        // 2) Kick off the WorkSessionViewModel
+        let sessionVM = WorkSessionViewModel(taskName: taskName, durationMinutes: dur)
+        self.workVM = sessionVM
 
-    var promptText: String {
-        switch step {
-        case .chooseTask:     return DialogueManager.randomTaskPrompt()
-        case .chooseDuration: return DialogueManager.randomDurationPrompt()
-        case .confirm:        return recapText ?? "Ready to rock?"
-        }
+        // 3) Trigger navigation in SwiftUI
+        isSessionActive = true
     }
 }
-

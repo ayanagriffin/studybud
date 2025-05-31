@@ -1,74 +1,73 @@
-// Views/DialogView.swift
-
 import SwiftUI
 
-struct DialogView<Buttons: View>: View {
-    // If true, show the overlay + dialog
+/// A reusable, centered modal “card” with a dimmed backdrop.
+/// - `isPresented`: Binding<Bool> that shows/hides the modal.
+/// - `title`: Optional title at the top of the card.
+/// - `message`: Main speech‑bubble message string.
+/// - `characterImageName`: The name of the avatar image to show on the card’s right side of the bubble.
+/// - `actions`: A trailing closure containing buttons (e.g. “Yes/No” or “Resume”) that appear at the bottom.
+struct DialogView<Actions: View>: View {
     @Binding var isPresented: Bool
-
-    // Optional title
-    let title: String?
-    // The speech‑bubble text
-    let message: String
-    // Name of your character asset
-    let characterImageName: String
-    // Buttons (e.g. Yes/No, Resume, etc.)
-    let buttons: Buttons
-
-    init(
-        isPresented: Binding<Bool>,
-        title: String? = nil,
-        message: String,
-        characterImageName: String,
-        @ViewBuilder buttons: () -> Buttons
-    ) {
-        self._isPresented = isPresented
-        self.title = title
-        self.message = message
-        self.characterImageName = characterImageName
-        self.buttons = buttons()
-    }
+    var title: String? = nil
+    var message: String
+    var characterImageName: String
+    let actions: () -> Actions
 
     var body: some View {
+        // Only render when isPresented == true
         if isPresented {
-            Color.black.opacity(0.4)
-                .ignoresSafeArea()
+            ZStack {
+                // 1) Dimmed black backdrop
+                Color.black.opacity(0.5)
+                    .ignoresSafeArea()
 
-            VStack {
-                ZStack(alignment: .topTrailing) {
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.white)
-                        .frame(width: 300)
-
-                    // Close “×”
-                    Button { isPresented = false } label: {
-                        Image(systemName: "xmark")
-                            .padding(12)
+                // 2) Centered card
+                VStack(spacing: 16) {
+                    // a) Top “X” close button (aligned top leading)
+                    HStack {
+                        Button(action: {
+                            isPresented = false
+                        }) {
+                            Image(systemName: "xmark")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                                .padding(8)
+                        }
+                        Spacer()
                     }
 
-                    VStack(spacing: 16) {
-                        // Title, if any
-                        if let title = title {
-                            Text(title)
-                                .font(.title2).bold()
-                        }
-
-                        // Speech bubble + character
-                        HStack(alignment: .top, spacing: 12) {
-                            SpeechBubble(text: message)
-                            Image(characterImageName)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 60, height: 60)
-                        }
-
-                        // Your custom buttons
-                        buttons
+                    // b) Optional title (e.g. “Paused” or “Are you sure?”)
+                    if let title = title {
+                        Text(title)
+                            .font(.title2)
+                            .bold()
+                            .foregroundColor(.black)
                     }
-                    .padding(.top, 40)
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 20)
+
+                    // c) Speech bubble containing the message + avatar
+                    HStack(alignment: .top, spacing: 12) {
+                        SpeechBubble(text: message)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Image(characterImageName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 60, height: 60)
+                    }
+                    .padding(.horizontal, 8)
+
+                    // d) Action buttons passed in by the caller
+                    HStack(spacing: 16) {
+                        actions()
+                    }
+                    .padding(.bottom, 12)
                 }
+                .padding(.top, 8)
+                .padding(.horizontal, 16)
+                .background(Color.white)
+                .cornerRadius(20)
+                .frame(maxWidth: UIScreen.main.bounds.width * 0.8)
+                .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
