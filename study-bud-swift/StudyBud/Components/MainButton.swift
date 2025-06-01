@@ -15,7 +15,7 @@ struct MainButton: View {
         Button(action: action) {
             Text(title)
                 .font(.buttonText)
-                .mainButtonStyle()
         }
+        .mainButtonStyle()
     }
 }

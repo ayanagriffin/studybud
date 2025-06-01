@@ -8,8 +8,8 @@
 import SwiftUI
 
 extension Font {
-    static let mainHeader = Font.system(size: 30, weight: .bold)
-    static let buttonText = Font.system(size: 20, weight: .semibold)
+    static let mainHeader = Font.custom("Jua-Regular", size: 30)
+    static let buttonText = Font.custom("Jua-Regular", size: 20)
     static let normalText = Font.system(size: 15)
     static let smallDescription = Font.system(size: 12)
 }

@@ -7,17 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		85F0AFFB2DC03BF10098F145 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85F0AFFA2DC03BF10098F145 /* Assets.xcassets */; };
 		EC8270A52A09BE8400E25480 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EC8270A42A09BE8400E25480 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		85F0AFFA2DC03BF10098F145 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2F95D94B2DEC6A7400B41F9C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EC82709A2A09BE8400E25480 /* StudyBud.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StudyBud.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC8270A42A09BE8400E25480 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		2F95D9452DEC69D800B41F9C /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 		2FD2BEA82DC1BA9700E8F1BF /* Content */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Content; sourceTree = "<group>"; };
 		85F0AFC92DC035BB0098F145 /* Preview */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Preview; sourceTree = "<group>"; };
 		85F0AFCA2DC038350098F145 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
@@ -60,6 +60,8 @@
 		EC82709C2A09BE8400E25480 /* StudyBud */ = {
 			isa = PBXGroup;
 			children = (
+				2F95D94B2DEC6A7400B41F9C /* Info.plist */,
+				2F95D9452DEC69D800B41F9C /* Resources */,
 				2FD2BEA82DC1BA9700E8F1BF /* Content */,
 				85F0B0012DC042820098F145 /* Modifiers */,
 				85F0B0002DC0426F0098F145 /* Components */,
@@ -70,7 +72,6 @@
 				85F0AFCD2DC0392D0098F145 /* ViewModels */,
 				85F0AFC92DC035BB0098F145 /* Preview */,
 				EC8270A32A09BE8400E25480 /* Preview Content */,
-				85F0AFFA2DC03BF10098F145 /* Assets.xcassets */,
 				85F0AFCF2DC0393D0098F145 /* Utils */,
 			);
 			path = StudyBud;
@@ -100,6 +101,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				2F95D9452DEC69D800B41F9C /* Resources */,
 				2FD2BEA82DC1BA9700E8F1BF /* Content */,
 				85F0AFCA2DC038350098F145 /* App */,
 				85F0AFCB2DC039190098F145 /* Views */,
@@ -153,7 +155,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				85F0AFFB2DC03BF10098F145 /* Assets.xcassets in Resources */,
 				EC8270A52A09BE8400E25480 /* Preview Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -298,6 +299,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StudyBud/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -328,6 +330,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StudyBud/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

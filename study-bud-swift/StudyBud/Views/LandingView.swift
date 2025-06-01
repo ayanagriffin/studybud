@@ -14,29 +14,20 @@ struct LandingView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Image("kitchen")
+                Image("landing")
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
 
                 VStack(spacing: 20) {
                     Spacer()
-
-                    Image("percyIdle")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 350, height: 350)
-
-                    Spacer()
-
-                    Text("Let's get to work!")
-                        .font(.mainHeader)
-                        .foregroundColor(.black)
-
-                    MainButton(title: "Next") {
+                    
+                    
+                    StartButton(title: "START SESSION ") {
                         navigate = true
-                        print("Next tapped")
                     }
+                    .padding(.horizontal, 40) // Optional: padding for better layout
+
 
                     Spacer()
                 }

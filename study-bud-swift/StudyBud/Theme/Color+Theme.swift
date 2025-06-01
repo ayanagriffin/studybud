@@ -7,6 +7,9 @@ extension Color {
     static let buttonSecodary = Color(hex: "#87ADA9")
     static let black = Color(hex: "#000000")
     static let accentYello = Color(hex: "#FFF6E3")
+    
+    static let yellow = Color(hex: "#FFDE4A")
+    static let orangeYellow = Color(hex: "FEAA18")
 
     init(hex: String) {
         let scanner = Scanner(string: hex)
