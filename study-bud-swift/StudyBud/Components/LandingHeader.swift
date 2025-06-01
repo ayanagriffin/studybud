@@ -27,6 +27,9 @@ struct LandingHeader: View {
                         
                     }
                     
+
+
+                    
                     HoursProgressBar(currentHours: 10, goalHours: 15)
                     
                 }

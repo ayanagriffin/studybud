@@ -10,6 +10,6 @@ import SwiftUI
 extension Font {
     static let mainHeader = Font.custom("Jua-Regular", size: 30)
     static let buttonText = Font.custom("Jua-Regular", size: 20)
-    static let normalText = Font.system(size: 15)
-    static let smallDescription = Font.system(size: 12)
+    static let normalText = Font.custom("Nunito-VariableFont_wght", size: 15)
+    static let smallDescription = Font.custom("Nunito-VariableFont_wght", size: 12)
 }
