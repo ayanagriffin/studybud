@@ -11,19 +11,20 @@ struct WorkSessionView: View {
     @State private var showPausedDialog = false
 
     var body: some View {
-        ZStack {
-            // ── 1) Full‑screen bedroom background if desired ──
+        ZStack(alignment: .top) {
+            // ── (Optional) Full‑screen bedroom background ──
 //            Image("bedroom")
 //                .resizable()
 //                .scaledToFill()
 //                .ignoresSafeArea()
 
-            // ── 2) All other content in a VStack that respects safe areas ──
+            // ── 1) Main content goes here ──
+            //   This VStack holds the character and buttons. Because
+            //   the header is overlaid, this content will never move
+            //   when the header expands or collapses.
             VStack {
-                headerView    // “Yellow header” with custom progress bar
                 Spacer()
 
-                // Character at desk
                 Image("blueAtDesk")
                     .resizable()
                     .scaledToFit()
@@ -32,7 +33,6 @@ struct WorkSessionView: View {
 
                 Spacer()
 
-                // Exit / Pause buttons
                 HStack(spacing: 40) {
                     CircleButton(iconName: "xmark", label: "Exit") {
                         showExitConfirm = true
@@ -47,6 +47,12 @@ struct WorkSessionView: View {
                 }
                 .padding(.bottom, 30)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // We do NOT add any top padding here—header will layer over it.
+
+            // ── 2) Header overlay (either full or compact) ──
+            headerView
+                .zIndex(1)   // Make sure the header is always on top
 
             // ── 3) Exit confirmation dialog ──
             DialogView(
@@ -86,35 +92,44 @@ struct WorkSessionView: View {
         .navigationBarBackButtonHidden(true)
     }
 
-    // ── Header: Yellow card with task, time remaining, percent, and custom progress bar ──
+    // ── Header: either full (expanded) or compact (minimized) ──
     @ViewBuilder
     private var headerView: some View {
         if isCompact {
-            // ── Compact mode: show only the time pill + expand arrow ──
+            // ── COMPACT HEADER: small capsule on the right that does not shift anything below ──
             HStack {
                 Spacer()
 
-                Text(vm.formattedTime)
-                    .font(.headline)
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 12)
-                    .background(Color.white.opacity(0.9))
-                    .cornerRadius(10)
-
-                Button {
-                    isCompact = false
-                } label: {
-                    Image(systemName: "arrow.up.left.and.arrow.down.right")
-                        .font(.title3)
+                HStack(spacing: 8) {
+                    // Only the current time (no “Task:” text here)
+                    Text(vm.formattedTime)
+                        .font(.headline)
+                        .bold()
                         .foregroundColor(.black)
-                        .padding(.trailing, 12)
+                }
+                .padding(.vertical, 10)
+                .padding(.horizontal, 16)
+                .background(
+                    Color("PanelFill")
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color("ButtonOutline"), lineWidth: 3)
+                        )
+                )
+                .fixedSize() // hug just its content + padding
+                .onTapGesture {
+                    // Tapping this capsule expands to full mode
+                    withAnimation(.easeInOut) {
+                        isCompact = false
+                    }
                 }
             }
-            .padding(.horizontal)
-            .padding(.top, safeAreaTop() + 8)
+            .padding(.horizontal)                   // a bit of inset from screen edges
+            .padding(.top, safeAreaTop() + 8)       // position under the notch
 
         } else {
-            // ── Full header: yellow background with all elements ──
+            // ── FULL HEADER (expanded): covers top area, overlays main content ──
             VStack(spacing: 12) {
                 HStack {
                     VStack(alignment: .leading, spacing: 8) {
@@ -129,7 +144,7 @@ struct WorkSessionView: View {
                             .bold()
                             .foregroundColor(.black)
 
-                        // 3) “Time Remaining” label (slightly smaller)
+                        // 3) “Time Remaining” label
                         Text("Time Remaining")
                             .font(.title3)
                             .bold()
@@ -138,14 +153,15 @@ struct WorkSessionView: View {
 
                     Spacer()
 
-                    // 4) Fullscreen/collapse toggle button
+                    // 4) Collapse icon (tap to minimize)
                     Button {
-                        isCompact = true
+                        withAnimation(.easeInOut) {
+                            isCompact = true
+                        }
                     } label: {
                         Image(systemName: "arrow.down.right.and.arrow.up.left")
                             .font(.title2)
                             .foregroundColor(.black)
-                            .padding(.trailing, 12)
                     }
                 }
 
@@ -173,10 +189,11 @@ struct WorkSessionView: View {
             )
             .padding(.horizontal)
             .padding(.top, safeAreaTop() + 8)
+            // This full header will float above main content without shifting it
         }
     }
 
-    // ── Utility to grab the top safe‑area inset (notch height) ──
+    // ── Utility: grab the top safe‑area inset (notch height) ──
     private func safeAreaTop() -> CGFloat {
         UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
@@ -188,23 +205,19 @@ struct WorkSessionView: View {
     }
 }
 
-// MARK: – A small view that draws a custom pink‐bordered progress bar
+// ── Custom Progress Bar ──
 struct CustomProgressBar: View {
-    // Expect progress in [0, 1]
-    let progress: Double
+    let progress: Double  // [0, 1]
 
     var body: some View {
         GeometryReader { geo in
-            // Outer capsule track (white background + pink border)
             ZStack(alignment: .leading) {
                 Capsule()
                     .fill(Color.white.opacity(0.9))
                     .overlay(
                         Capsule()
-                            .stroke(Color.red.opacity(0.8), lineWidth: 3)
+                            .stroke(Color("PanelAccent"), lineWidth: 3)
                     )
-
-                // Inner filled capsule (pink)
                 Capsule()
                     .fill(Color.red.opacity(0.8))
                     .frame(width: max(CGFloat(progress) * geo.size.width, 0))
@@ -212,6 +225,7 @@ struct CustomProgressBar: View {
         }
     }
 }
+
 
 struct WorkSessionView_Previews: PreviewProvider {
     static var previews: some View {
