@@ -12,17 +12,18 @@ struct WorkSessionView: View {
 
     var body: some View {
         ZStack {
-            // ── 1) Full‐screen bedroom background ──
+            // ── 1) Full‑screen bedroom background if desired ──
 //            Image("bedroom")
 //                .resizable()
 //                .scaledToFill()
 //                .ignoresSafeArea()
 
-            // ── 2) All other content lives in a VStack that respects safe areas ──
+            // ── 2) All other content in a VStack that respects safe areas ──
             VStack {
-                headerView   // this will automatically be placed below the notch
+                headerView    // “Yellow header” with custom progress bar
                 Spacer()
 
+                // Character at desk
                 Image("blueAtDesk")
                     .resizable()
                     .scaledToFit()
@@ -31,6 +32,7 @@ struct WorkSessionView: View {
 
                 Spacer()
 
+                // Exit / Pause buttons
                 HStack(spacing: 40) {
                     CircleButton(iconName: "xmark", label: "Exit") {
                         showExitConfirm = true
@@ -45,7 +47,6 @@ struct WorkSessionView: View {
                 }
                 .padding(.bottom, 30)
             }
-            // No .ignoresSafeArea here, so headerView will sit below the status bar/notch
 
             // ── 3) Exit confirmation dialog ──
             DialogView(
@@ -63,7 +64,7 @@ struct WorkSessionView: View {
                     Button("No") {
                         showExitConfirm = false
                     }
-                    .buttonStyle(PrimaryButtonStyle())
+                    .buttonStyle(YellowOutlinedButtonStyle())
                 }
             }
 
@@ -78,17 +79,21 @@ struct WorkSessionView: View {
                     vm.resume()
                     showPausedDialog = false
                 }
-                .buttonStyle(PrimaryButtonStyle())
+                .buttonStyle(YellowOutlinedButtonStyle())
             }
         }
+        // Hide the default back button if inside a NavigationStack
+        .navigationBarBackButtonHidden(true)
     }
 
-    // ── Header that automatically sits below the notch ──
+    // ── Header: Yellow card with task, time remaining, percent, and custom progress bar ──
     @ViewBuilder
     private var headerView: some View {
         if isCompact {
+            // ── Compact mode: show only the time pill + expand arrow ──
             HStack {
                 Spacer()
+
                 Text(vm.formattedTime)
                     .font(.headline)
                     .padding(.vertical, 6)
@@ -101,47 +106,109 @@ struct WorkSessionView: View {
                 } label: {
                     Image(systemName: "arrow.up.left.and.arrow.down.right")
                         .font(.title3)
+                        .foregroundColor(.black)
                         .padding(.trailing, 12)
                 }
             }
             .padding(.horizontal)
-            .padding(.top, 8)    // small extra padding under status bar
+            .padding(.top, safeAreaTop() + 8)
+
         } else {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Task: \(vm.taskName)")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+            // ── Full header: yellow background with all elements ──
+            VStack(spacing: 12) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 8) {
+                        // 1) Task name
+                        Text("Task: \(vm.taskName)")
+                            .font(.subheadline)
+                            .foregroundColor(.black)
 
-                    Text(vm.formattedTime)
-                        .font(.title)
-                        .bold()
+                        // 2) Large timer on its own line
+                        Text(vm.formattedTime)
+                            .font(.largeTitle)
+                            .bold()
+                            .foregroundColor(.black)
 
-                    Text("\(vm.percentComplete)% Complete")
+                        // 3) “Time Remaining” label (slightly smaller)
+                        Text("Time Remaining")
+                            .font(.title3)
+                            .bold()
+                            .foregroundColor(.black)
+                    }
+
+                    Spacer()
+
+                    // 4) Fullscreen/collapse toggle button
+                    Button {
+                        isCompact = true
+                    } label: {
+                        Image(systemName: "arrow.down.right.and.arrow.up.left")
+                            .font(.title2)
+                            .foregroundColor(.black)
+                            .padding(.trailing, 12)
+                    }
+                }
+
+                // 5) Percent Complete in bold red
+                HStack(spacing: 0) {
+                    Text("\(vm.percentComplete)%")
                         .font(.caption)
-                        .foregroundColor(.secondary)
-
-                    ProgressView(value: vm.progress)
-                        .scaleEffect(x: 1, y: 4, anchor: .center)
-                        .clipShape(Capsule())
+                        .bold()
+                        .foregroundColor(.red)
+                    Text(" Complete")
+                        .font(.caption)
+                        .foregroundColor(.red)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                Spacer()
-
-                Button {
-                    isCompact = true
-                } label: {
-                    Image(systemName: "arrow.down.right.and.arrow.up.left")
-                        .font(.title3)
-                }
-                .padding(.top, 4)
-                .padding(.trailing, 12)
+                // 6) Custom pink‐bordered progress bar
+                CustomProgressBar(progress: vm.progress)
+                    .frame(height: 14)
             }
-            .padding()
-            .background(Color.white.opacity(0.9))  // semi‑opaque white
-            .cornerRadius(12)
+            .padding(.vertical, 16)
+            .padding(.horizontal, 20)
+            .background(
+                Color("PanelFill")
+                    .cornerRadius(20)
+            )
             .padding(.horizontal)
-            .padding(.top, 8)   // small extra padding under status bar
+            .padding(.top, safeAreaTop() + 8)
+        }
+    }
+
+    // ── Utility to grab the top safe‑area inset (notch height) ──
+    private func safeAreaTop() -> CGFloat {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first?
+            .windows
+            .first { $0.isKeyWindow }?
+            .safeAreaInsets
+            .top ?? 0
+    }
+}
+
+// MARK: – A small view that draws a custom pink‐bordered progress bar
+struct CustomProgressBar: View {
+    // Expect progress in [0, 1]
+    let progress: Double
+
+    var body: some View {
+        GeometryReader { geo in
+            // Outer capsule track (white background + pink border)
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(Color.white.opacity(0.9))
+                    .overlay(
+                        Capsule()
+                            .stroke(Color.red.opacity(0.8), lineWidth: 3)
+                    )
+
+                // Inner filled capsule (pink)
+                Capsule()
+                    .fill(Color.red.opacity(0.8))
+                    .frame(width: max(CGFloat(progress) * geo.size.width, 0))
+            }
         }
     }
 }
@@ -149,7 +216,7 @@ struct WorkSessionView: View {
 struct WorkSessionView_Previews: PreviewProvider {
     static var previews: some View {
         WorkSessionView(
-            vm: WorkSessionViewModel(taskName: "Read Chapter", durationMinutes: 1)
+            vm: WorkSessionViewModel(taskName: "Homework", durationMinutes: 50)
         )
     }
 }

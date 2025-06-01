@@ -12,7 +12,7 @@ struct DurationSelectionView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
             }
-            .buttonStyle(FilledButtonStyle())
+            .buttonStyle(YellowOutlinedButtonStyle())
 
             Button(action: { onSelect(45) }) {
                 Text("45 Minutes")
@@ -21,7 +21,7 @@ struct DurationSelectionView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
             }
-            .buttonStyle(FilledButtonStyle())
+            .buttonStyle(YellowOutlinedButtonStyle())
         }
     }
 }

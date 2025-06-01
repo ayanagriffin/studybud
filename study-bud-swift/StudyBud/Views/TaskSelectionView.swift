@@ -19,7 +19,7 @@ struct TaskSelectionView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
                     }
-                    .buttonStyle(OutlinedButtonStyle())
+                    .buttonStyle(YellowOutlinedButtonStyle())
                 }
             }
 
@@ -35,12 +35,7 @@ struct TaskSelectionView: View {
                 }
                 .padding(.vertical, 12)
                 .padding(.horizontal, 16)
-                .background(Color.white.opacity(0.8))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color("AccentYellow"), lineWidth: 2)
-                )
-                .cornerRadius(20)
+                .buttonStyle(YellowOutlinedButtonStyle())
 
                 Button(action: {
                     let trimmed = customTask.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -53,7 +48,7 @@ struct TaskSelectionView: View {
                         .padding(.vertical, 12)
                         .padding(.horizontal, 20)
                 }
-                .buttonStyle(FilledButtonStyle())
+                .buttonStyle(YellowOutlinedButtonStyle())
             }
         }
     }
