@@ -63,7 +63,7 @@ struct WorkSessionView: View {
                     Button("No") {
                         showExitConfirm = false
                     }
-                    .buttonStyle(PrimaryButtonStyle())
+                    .buttonStyle(YellowOutlinedButtonStyle())
                 }
             }
 
@@ -78,7 +78,7 @@ struct WorkSessionView: View {
                     vm.resume()
                     showPausedDialog = false
                 }
-                .buttonStyle(PrimaryButtonStyle())
+                .buttonStyle(YellowOutlinedButtonStyle())
             }
         }
     }
