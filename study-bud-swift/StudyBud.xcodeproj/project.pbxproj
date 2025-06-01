@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2FC03F712DECEC2700C89786 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 2FC03F702DECEC2400C89786 /* .gitignore */; };
 		EC8270A52A09BE8400E25480 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EC8270A42A09BE8400E25480 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2F95D94B2DEC6A7400B41F9C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		2FC03F702DECEC2400C89786 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		EC82709A2A09BE8400E25480 /* StudyBud.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StudyBud.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC8270A42A09BE8400E25480 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -60,6 +62,7 @@
 		EC82709C2A09BE8400E25480 /* StudyBud */ = {
 			isa = PBXGroup;
 			children = (
+				2FC03F702DECEC2400C89786 /* .gitignore */,
 				2F95D94B2DEC6A7400B41F9C /* Info.plist */,
 				2F95D9452DEC69D800B41F9C /* Resources */,
 				2FD2BEA82DC1BA9700E8F1BF /* Content */,
@@ -155,6 +158,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2FC03F712DECEC2700C89786 /* .gitignore in Resources */,
 				EC8270A52A09BE8400E25480 /* Preview Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
