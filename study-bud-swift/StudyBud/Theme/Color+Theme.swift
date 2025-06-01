@@ -6,10 +6,16 @@ extension Color {
     static let buttonPrimary = Color(hex: "#C6D8D6")
     static let buttonSecodary = Color(hex: "#87ADA9")
     static let black = Color(hex: "#000000")
-    static let accentYello = Color(hex: "#FFF6E3")
     
     static let yellow = Color(hex: "#FFDE4A")
-    static let orangeYellow = Color(hex: "FEAA18")
+    static let orangeYellow = Color(hex: "#FEAA18")
+    
+    static let pink = Color(hex: "#FE757E")
+    
+    static let lightGray = Color(hex: "D1D1D1")
+    static let gray = Color(hex: "#797979")
+    static let darkGray = Color(hex: "#5F5F5F")
+
 
     init(hex: String) {
         let scanner = Scanner(string: hex)
