@@ -28,6 +28,9 @@ struct LandingView: View {
                     }
                     .frame(width: geometry.size.width, height: geometry.size.height)
                 }
+                ChatBubbleView(text: "Hey John! I've been itching to do some work.", tailPosition: 0.7)
+                    .frame(maxWidth: 300)
+                    .position(x: 220, y: 300)
             }
             .navigationDestination(isPresented: $navigate) {
                 PreSessionView()

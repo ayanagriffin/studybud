@@ -12,7 +12,7 @@ struct GrayRectangleModifier: ViewModifier {
             .cornerRadius(4)
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.gray, lineWidth: 4)
+                    .stroke(Color.gray, lineWidth: 3)
             )
     }
 }
