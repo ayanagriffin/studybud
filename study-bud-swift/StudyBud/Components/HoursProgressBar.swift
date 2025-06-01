@@ -34,6 +34,8 @@ struct HoursProgressBar: View {
                     .foregroundColor(.white)
                     .padding(.leading, 16)
             }
+            .offset(x: -5) // Adjust overlap
+
 
             // Gift Icon – overlapping right side
             ZStack {
@@ -49,7 +51,7 @@ struct HoursProgressBar: View {
                     .frame(width: 40, height: 40)
                     .foregroundColor(Color(.lightGray))
             }
-            .offset(x: 20) // Adjust overlap
+            .offset(x: 15) // Adjust overlap
         }
         .frame(height: 80) // To make space for the gift icon
         .padding(.leading, 16) // Reduced from 16

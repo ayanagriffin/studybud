@@ -13,17 +13,17 @@ struct ShopButton: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 8) {
+            VStack(spacing: 2) {
                 Image(systemName: "bag.fill")
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 32)
                     .foregroundColor(.gray)
                 
                 Text(title)
                     .font(.normalText)
                     .foregroundColor(.black)
             }
+            .padding(4)
         }
         .grayRectangleStyle()
     }

@@ -8,11 +8,10 @@ import SwiftUI
 struct GrayRectangleModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .padding()
-            .frame(width: 72, height: 72)
+            .frame(width: 52, height: 52)
             .cornerRadius(4)
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.gray, lineWidth: 4)
             )
     }

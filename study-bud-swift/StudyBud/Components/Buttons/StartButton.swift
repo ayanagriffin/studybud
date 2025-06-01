@@ -14,11 +14,11 @@ struct StartButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.buttonText)
+                .font(.mainHeader)
                 .padding(.vertical,6)
             
             Image(systemName: "chevron.right")
-                .font(.buttonText)
+                .font(.mainHeader)
         }
         .startButtonStyle()
     }

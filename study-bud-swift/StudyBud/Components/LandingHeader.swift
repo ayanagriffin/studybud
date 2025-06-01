@@ -1,47 +1,30 @@
-//
-//  LandingView 2.swift
-//  StudyBud
-//
-//  Created by Ayana Griffin on 5/30/25.
-//
-
-
 import SwiftUI
 
 struct LandingHeader: View {
-    @State private var navigate = false
-
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Image("landing")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                VStack(alignment: .trailing, spacing: 1) {
+                    Text("TUESDAY")
+                        .font(.dateHeader)
+                    Text("MAY 21ST")
+                        .font(.buttonText)
+                }
 
-                VStack(spacing: 0) {
-                    Spacer()
-                    
-                    HStack(spacing: 10) {
-                        Text("MON, JUN 2ND").font(.mainHeader)
-                        
-                    }
-                    
-
-
-                    
-                    HoursProgressBar(currentHours: 10, goalHours: 15)
-                    
+                HStack(spacing: 8) {
+                    ShopButton(title: "Shop") { print("Shop tapped") }
+                    StatsButton(title: "Stats") { print("Stats tapped") }
+                    SettingsButton { print("Settings tapped") }
                 }
             }
-            .navigationDestination(isPresented: $navigate) {
-                PreSessionView()
-            }
+            .padding(.horizontal, 20)
+
+            HoursProgressBar(currentHours: 10, goalHours: 15)
         }
     }
 }
 
 #Preview {
     LandingHeader()
+        .previewLayout(.sizeThatFits)
 }
-

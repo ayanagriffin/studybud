@@ -1,11 +1,4 @@
-//
-//  LandingView 2.swift
-//  StudyBud
-//
-//  Created by Ayana Griffin on 5/30/25.
-//
-
-
+import SwiftUI
 import SwiftUI
 
 struct LandingView: View {
@@ -19,21 +12,21 @@ struct LandingView: View {
                     .scaledToFill()
                     .ignoresSafeArea()
 
-                VStack(spacing: 10) {
-                    Spacer()
-                    
-                    HStack(spacing: 10) {
-                        Text("MON, JUN 2ND").font(.mainHeader)
-                    }
-                    
-                    HoursProgressBar(currentHours: 10, goalHours: 15)
-                    
-                    StartButton(title: "START SESSION ") {
-                        navigate = true
-                    }
-                    .padding(.horizontal, 40)
+                GeometryReader { geometry in
+                    VStack(alignment: .center, spacing: 10) {
+                        LandingHeader()
+                            .padding(.top, 60)
+                            .padding(.horizontal, 2)
 
-                    Spacer()
+                        Spacer()
+
+                        StartButton(title: "START SESSION") {
+                            navigate = true
+                        }
+                        .padding(.horizontal, 40)
+                        .padding(.bottom, max(geometry.safeAreaInsets.bottom, 80))
+                    }
+                    .frame(width: geometry.size.width, height: geometry.size.height)
                 }
             }
             .navigationDestination(isPresented: $navigate) {
@@ -43,7 +36,8 @@ struct LandingView: View {
     }
 }
 
+
+
 #Preview {
     LandingView()
 }
-
