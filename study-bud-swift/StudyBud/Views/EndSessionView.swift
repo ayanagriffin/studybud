@@ -18,7 +18,11 @@ struct EndSessionView: View {
                 VStack(spacing: 0) {
                     HStack {
                         BackArrow {
-                            dismiss()
+                            if vm.step != .initial {
+                                vm.step = .initial
+                            } else {
+                                dismiss()
+                            }
                         }
                         Spacer()
                     }
@@ -50,7 +54,7 @@ struct EndSessionView: View {
                 }
 
                 NavigationLink("", isActive: $vm.isBreakActive) {
-                    BreakView(duration: vm.breakDuration ?? 5)
+                    BreakView(duration: CGFloat(vm.breakDuration ?? 5))
                 }
             }
             .navigationBarBackButtonHidden(true)
