@@ -37,6 +37,8 @@ struct LandingView: View {
                     .frame(maxWidth: 300)
                     .position(x: 220, y: 300)
             }
+            .navigationBarBackButtonHidden(true)
+
             .navigationDestination(isPresented: $navigate) {
                 PreSessionView()
             }
