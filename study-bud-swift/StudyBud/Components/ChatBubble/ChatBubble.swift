@@ -16,7 +16,7 @@ struct ChatBubbleView: View {
             )
             .overlay(
                 UpdatedSpeechBubble(tailPosition: tailPosition)
-                    .stroke(Color.darkGray, lineWidth: 3)
+                    .stroke(Color.darkGray, lineWidth: 4)
             )
             .fixedSize(horizontal: false, vertical: true)
             .padding()

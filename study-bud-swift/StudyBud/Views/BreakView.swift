@@ -1,7 +1,16 @@
-//
-//  Untitled.swift
-//  StudyBud
-//
-//  Created by Ayana Griffin on 4/28/25.
-//
+import SwiftUI
 
+struct BreakView: View {
+    let duration: Int
+
+    var body: some View {
+        VStack {
+            Spacer()
+            Text("Enjoy your \(duration)-minute break!")
+                .font(.title)
+                .padding()
+            Spacer()
+        }
+        .background(Color("blue").ignoresSafeArea())
+    }
+}
