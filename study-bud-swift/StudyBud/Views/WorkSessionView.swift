@@ -55,108 +55,68 @@ struct WorkSessionView: View {
                 .zIndex(1)
 
             // ── 4) Exit confirmation overlay ──
-            if showExitConfirm {
-                VStack(spacing: 16) {
-                    // A) ChatBubbleView for the “Are you sure…?” message
-                    ChatBubbleView(
-                        text: "Are you sure you want to exit?",
-                        tailPosition: 0.85
-                    )
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 24)
-
-                    // B) Yes / No buttons
-                    HStack(spacing: 24) {
-                        Button("Yes") {
-                            vm.exit()
-                            dismiss()
-                        }
-                        .font(.buttonText)
-                        .foregroundColor(.black)
-                        .frame(minWidth: 120, minHeight: 44)
-                        .background(Color.clear)
-
-                        Button("No") {
-                            vm.resume()
-                            withAnimation {
-                                showExitConfirm = false
-                            }
-                        }
-                        .font(.buttonText)
-                        .foregroundColor(.black)
-                        .frame(minWidth: 120, minHeight: 44)
-                        .background(
-                            Color("ButtonFill")
-                                .clipShape(RoundedRectangle(cornerRadius: 20))
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color("ButtonOutline"), lineWidth: 3)
-                        )
-                    }
+            DialogView(
+                isPresented: $showExitConfirm,
+                title: "Are you sure?",
+                message: "Are you sure you want to exit?",
+                characterImageName: "blue",
+                onClose: {
+                    vm.resume()
                 }
-                .padding(24)
-                .background(
-                    Color.white.opacity(0.95)
-                        .cornerRadius(20)
-                        .shadow(radius: 8)
-                )
-                .frame(maxWidth: 400)
-                .padding(.horizontal, 24)
-                .padding(.top, safeAreaTop() + 200)
-                .zIndex(2)
-            }
-
-            // ── 5) Pause confirmation overlay ──
-            if showPausedDialog {
-                VStack(spacing: 16) {
-                    // A) “Paused” title
-                    Text("Paused")
-                        .font(.mainHeader)
-                        .bold()
-                        .foregroundColor(.black)
-
-                    // B) The pause ChatBubbleView
-                    ChatBubbleView(
-                        text: "Ok, but don’t take too long! Come back soon!",
-                        tailPosition: 0.85
-                    )
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 24)
-
-                    // C) “Resume” button
-                    Button("Resume") {
-                        vm.resume()
-                        withAnimation {
-                            showPausedDialog = false
-                        }
+            ) {
+                HStack(spacing: 16) {
+                    Button(action: {
+                        vm.exit()
+                        dismiss()
+                    }) {
+                        Text("Yes")
+                            .font(.buttonText)
+                            .foregroundColor(.black)
+                            .frame(minWidth: 100, minHeight: 44)
                     }
-                    .font(.buttonText)
-                    .foregroundColor(.black)
-                    .frame(width: 180, height: 44)
                     .background(
-                        Color("ButtonFill")
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                    )
-                    .overlay(
                         RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color("ButtonOutline"), lineWidth: 3)
+                            .fill(Color.white)
                     )
+
+                    ChoiceButton(title: "No", width: 100) {
+                        vm.resume()
+                        withAnimation { showExitConfirm = false }
+                    }
                 }
-                .padding(24)
-                .background(
-                    Color.white.opacity(0.95)
-                        .cornerRadius(20)
-                        .shadow(radius: 8)
-                )
-                .frame(maxWidth: 400)
-                .padding(.horizontal, 24)
-                .padding(.top, safeAreaTop() + 200)
-                .zIndex(2)
             }
-        }
-        .navigationBarBackButtonHidden(true)
-    }
+
+
+                        .zIndex(2)
+
+                        // ── 5) Pause confirmation dialog ──
+            DialogView(
+                isPresented: $showPausedDialog,
+                title: "Paused",
+                message: "Ok, but don’t take too long! Come back soon!",
+                characterImageName: "blue",
+                onClose: {
+                    vm.resume()
+                }
+            ) {
+                ChoiceButton(
+                    title: "Resume",
+                    width: 220,
+                    fontWeight: .semibold
+                ) {
+                    vm.resume()
+                    withAnimation {
+                        showPausedDialog = false
+                    }
+                }
+            }
+
+                        .zIndex(2)
+                    }
+                    // Hide the default back button if inside a NavigationStack
+                    .navigationBarBackButtonHidden(true)
+                }
+    
 
     // ── Header (full or compact) ──
     @ViewBuilder

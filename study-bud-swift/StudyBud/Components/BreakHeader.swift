@@ -19,7 +19,7 @@ struct BreakHeader: View {
                 .foregroundColor(.black)
                 .padding(.top, 16)
 
-            TimeProgressBar(currentTime: currentTime, totalTime: totalTime, label: "Break")
+//            TimeProgressBar(currentTime: currentTime, totalTime: totalTime, label: "Break")
         }
         .padding()
         .onAppear {
