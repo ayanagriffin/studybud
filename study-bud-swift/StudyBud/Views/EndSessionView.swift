@@ -5,6 +5,7 @@ struct EndSessionView: View {
     @StateObject private var vm = EndSessionViewModel()
     @State private var customDurationText = ""
 
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -18,7 +19,11 @@ struct EndSessionView: View {
                 VStack(spacing: 0) {
                     HStack {
                         BackArrow {
-                            dismiss()
+                            if vm.step != .initial {
+                                vm.step = .initial
+                            } else {
+                                dismiss()
+                            }
                         }
                         Spacer()
                     }
@@ -48,9 +53,11 @@ struct EndSessionView: View {
                 NavigationLink("", isActive: $vm.isWorkSessionActive) {
                     WorkSessionView(vm: vm.workSessionVM!)
                 }
-
                 NavigationLink("", isActive: $vm.isBreakActive) {
-                    BreakView(duration: vm.breakDuration ?? 5)
+                    BreakView(duration: CGFloat(vm.breakDuration ?? 5), isActive: $vm.isBreakActive)
+                }
+                NavigationLink("", isActive: $vm.isSessionComplete) {
+                    SessionResultsView()
                 }
             }
             .navigationBarBackButtonHidden(true)
@@ -68,7 +75,7 @@ struct EndSessionView: View {
                 }
             }
             ChoiceButton(title: "End Session", width: 160) {
-                dismiss()
+                vm.isSessionComplete = true
             }
         }
     }
