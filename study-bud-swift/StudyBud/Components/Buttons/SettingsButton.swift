@@ -1,21 +1,17 @@
 import SwiftUI
 
 struct SettingsButton: View {
-    var action: () -> Void
-    
     var body: some View {
-        Button(action: action) {
+        NavigationLink(destination: SettingsView()) {
             Image(systemName: "gearshape.fill")
                 .resizable()
                 .scaledToFit()
                 .foregroundColor(.gray)
+                .frame(width: 36, height: 36)
         }
-        .frame(width: 36, height: 36) // ✅ Final size constraint
     }
 }
 
 #Preview {
-    SettingsButton {
-        print("Settings Pressed")
-    }
+    SettingsButton()
 }

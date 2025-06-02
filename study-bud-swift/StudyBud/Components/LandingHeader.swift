@@ -11,10 +11,11 @@ struct LandingHeader: View {
                         .font(.buttonText)
                 }
 
+                Spacer()
                 HStack(spacing: 8) {
-                    ShopButton(title: "Shop") { print("Shop tapped") }
-                    StatsButton(title: "Stats") { print("Stats tapped") }
-                    SettingsButton { print("Settings tapped") }
+                    ShopButton()
+                    StatsButton()
+                    SettingsButton()
                 }
             }
             .padding(.horizontal, 20)

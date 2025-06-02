@@ -1,5 +1,3 @@
-// Views/WorkSessionView.swift
-
 import SwiftUI
 
 struct WorkSessionView: View {
@@ -12,139 +10,197 @@ struct WorkSessionView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            // ── (Optional) Full‑screen bedroom background ──
-//            Image("bedroom")
-//                .resizable()
-//                .scaledToFill()
-//                .ignoresSafeArea()
+            // ── 1) Full‑screen bedroom background ──
+            Image("landing")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
 
-            // ── 1) Main content goes here ──
-            //   This VStack holds the character and buttons. Because
-            //   the header is overlaid, this content will never move
-            //   when the header expands or collapses.
+            // ── 2) Main content (character + buttons) ──
+            //    We do NOT give this VStack any top padding,
+            //    because headerView will float on top of it.
             VStack {
                 Spacer()
 
-                Image("blueAtDesk")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight: 300)
-                    .padding(.horizontal)
+//                Image("blueAtDesk")
+//                    .resizable()
+//                    .scaledToFit()
+//                    .frame(maxHeight: 300)
+//                    .padding(.horizontal)
 
                 Spacer()
 
-                HStack(spacing: 40) {
+                HStack(spacing: 24) {
                     CircleButton(iconName: "xmark", label: "Exit") {
-                        showExitConfirm = true
-                    }
-                    CircleButton(
-                        iconName: vm.isPaused ? "play.fill" : "pause.fill",
-                        label: vm.isPaused ? "Resume" : "Pause"
-                    ) {
                         vm.pause()
-                        showPausedDialog = true
+                        withAnimation {
+                            showExitConfirm = true
+                        }
+                    }
+                    CircleButton(iconName: "pause.fill", label: "Pause") {
+                        vm.pause()
+                        withAnimation {
+                            showPausedDialog = true
+                        }
                     }
                 }
-                .padding(.bottom, 30)
+                .padding(.bottom, 120)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            // We do NOT add any top padding here—header will layer over it.
+            // No top padding here: headerView will overlay.
 
-            // ── 2) Header overlay (either full or compact) ──
+            // ── 3) Header (either full or compact) ──
             headerView
-                .zIndex(1)   // Make sure the header is always on top
+                .fixedSize(horizontal: false, vertical: true)
+                .zIndex(1)
 
-            // ── 3) Exit confirmation dialog ──
-            DialogView(
-                isPresented: $showExitConfirm,
-                message: "Are you sure you want to exit?",
-                characterImageName: "blue"
-            ) {
-                HStack(spacing: 24) {
-                    Button("Yes") {
-                        vm.exit()
-                        dismiss()
-                    }
-                    .font(.headline)
+            // ── 4) Exit confirmation overlay ──
+            if showExitConfirm {
+                VStack(spacing: 16) {
+                    // A) ChatBubbleView for the “Are you sure…?” message
+                    ChatBubbleView(
+                        text: "Are you sure you want to exit?",
+                        tailPosition: 0.85
+                    )
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 24)
 
-                    Button("No") {
-                        showExitConfirm = false
+                    // B) Yes / No buttons
+                    HStack(spacing: 24) {
+                        Button("Yes") {
+                            vm.exit()
+                            dismiss()
+                        }
+                        .font(.buttonText)
+                        .foregroundColor(.black)
+                        .frame(minWidth: 120, minHeight: 44)
+                        .background(Color.clear)
+
+                        Button("No") {
+                            vm.resume()
+                            withAnimation {
+                                showExitConfirm = false
+                            }
+                        }
+                        .font(.buttonText)
+                        .foregroundColor(.black)
+                        .frame(minWidth: 120, minHeight: 44)
+                        .background(
+                            Color("ButtonFill")
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color("ButtonOutline"), lineWidth: 3)
+                        )
                     }
-                    .buttonStyle(YellowOutlinedButtonStyle())
                 }
+                .padding(24)
+                .background(
+                    Color.white.opacity(0.95)
+                        .cornerRadius(20)
+                        .shadow(radius: 8)
+                )
+                .frame(maxWidth: 400)
+                .padding(.horizontal, 24)
+                .padding(.top, safeAreaTop() + 200)
+                .zIndex(2)
             }
 
-            // ── 4) Pause confirmation dialog ──
-            DialogView(
-                isPresented: $showPausedDialog,
-                title: "Paused",
-                message: "Ok, but don’t take too long! Come back soon!",
-                characterImageName: "blue"
-            ) {
-                Button("Resume") {
-                    vm.resume()
-                    showPausedDialog = false
+            // ── 5) Pause confirmation overlay ──
+            if showPausedDialog {
+                VStack(spacing: 16) {
+                    // A) “Paused” title
+                    Text("Paused")
+                        .font(.mainHeader)
+                        .bold()
+                        .foregroundColor(.black)
+
+                    // B) The pause ChatBubbleView
+                    ChatBubbleView(
+                        text: "Ok, but don’t take too long! Come back soon!",
+                        tailPosition: 0.85
+                    )
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 24)
+
+                    // C) “Resume” button
+                    Button("Resume") {
+                        vm.resume()
+                        withAnimation {
+                            showPausedDialog = false
+                        }
+                    }
+                    .font(.buttonText)
+                    .foregroundColor(.black)
+                    .frame(width: 180, height: 44)
+                    .background(
+                        Color("ButtonFill")
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color("ButtonOutline"), lineWidth: 3)
+                    )
                 }
-                .buttonStyle(YellowOutlinedButtonStyle())
+                .padding(24)
+                .background(
+                    Color.white.opacity(0.95)
+                        .cornerRadius(20)
+                        .shadow(radius: 8)
+                )
+                .frame(maxWidth: 400)
+                .padding(.horizontal, 24)
+                .padding(.top, safeAreaTop() + 200)
+                .zIndex(2)
             }
         }
-        // Hide the default back button if inside a NavigationStack
         .navigationBarBackButtonHidden(true)
     }
 
-    // ── Header: either full (expanded) or compact (minimized) ──
+    // ── Header (full or compact) ──
     @ViewBuilder
     private var headerView: some View {
         if isCompact {
-            // ── COMPACT HEADER: small capsule on the right that does not shift anything below ──
+            // ── COMPACT version: a small capsule showing just the time ──
             HStack {
-                Spacer()
-
-                HStack(spacing: 8) {
-                    // Only the current time (no “Task:” text here)
-                    Text(vm.formattedTime)
-                        .font(.headline)
-                        .bold()
-                        .foregroundColor(.black)
-                }
-                .padding(.vertical, 10)
-                .padding(.horizontal, 16)
-                .background(
-                    Color("PanelFill")
-                        .cornerRadius(10)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color("ButtonOutline"), lineWidth: 3)
-                        )
-                )
-                .fixedSize() // hug just its content + padding
-                .onTapGesture {
-                    // Tapping this capsule expands to full mode
-                    withAnimation(.easeInOut) {
-                        isCompact = false
-                    }
+                Text(vm.formattedTime)
+                    .font(.buttonText)
+                    .bold()
+                    .foregroundColor(.black)
+            }
+            .frame(maxWidth: 80)
+            .padding(.vertical, 10)
+            .padding(.horizontal, 10)
+            .background(
+                Color("PanelFill")
+                    .cornerRadius(20)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color("ButtonOutline"), lineWidth: 4)
+                    )
+            )
+            .onTapGesture {
+                withAnimation(.easeInOut) {
+                    isCompact = false
                 }
             }
-            .padding(.horizontal)                   // a bit of inset from screen edges
-            .padding(.top, safeAreaTop() + 8)       // position under the notch
+            .offset(y: safeAreaTop() + 16)
 
         } else {
-            // ── FULL HEADER (expanded): covers top area, overlays main content ──
+            // ── FULL version: task, timer, “Time Remaining”, percent + progress bar ──
             VStack(spacing: 12) {
-                HStack {
+                HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 8) {
-                        // 1) Task name
                         Text("Task: \(vm.taskName)")
                             .font(.subheadline)
                             .foregroundColor(.black)
 
-                        // 2) Large timer on its own line
                         Text(vm.formattedTime)
                             .font(.largeTitle)
                             .bold()
                             .foregroundColor(.black)
 
-                        // 3) “Time Remaining” label
                         Text("Time Remaining")
                             .font(.title3)
                             .bold()
@@ -153,7 +209,6 @@ struct WorkSessionView: View {
 
                     Spacer()
 
-                    // 4) Collapse icon (tap to minimize)
                     Button {
                         withAnimation(.easeInOut) {
                             isCompact = true
@@ -162,38 +217,60 @@ struct WorkSessionView: View {
                         Image(systemName: "arrow.down.right.and.arrow.up.left")
                             .font(.title2)
                             .foregroundColor(.black)
+                            .offset(y: -2)
                     }
                 }
 
-                // 5) Percent Complete in bold red
                 HStack(spacing: 0) {
                     Text("\(vm.percentComplete)%")
                         .font(.caption)
                         .bold()
-                        .foregroundColor(.red)
+                        .foregroundColor(Color("PanelAccent"))
                     Text(" Complete")
                         .font(.caption)
-                        .foregroundColor(.red)
+                        .foregroundColor(Color("PanelAccent"))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                // 6) Custom pink‐bordered progress bar
                 CustomProgressBar(progress: vm.progress)
                     .frame(height: 14)
             }
             .padding(.vertical, 16)
             .padding(.horizontal, 20)
+            .frame(
+                width: UIScreen.main.bounds.width - 32  // <–– force full banner to be screen.width – 32
+            )
             .background(
                 Color("PanelFill")
                     .cornerRadius(20)
             )
-            .padding(.horizontal)
-            .padding(.top, safeAreaTop() + 8)
-            // This full header will float above main content without shifting it
+            .offset(y: safeAreaTop() + 16)
+
         }
     }
 
-    // ── Utility: grab the top safe‑area inset (notch height) ──
+
+    // ── Custom progress bar remains unchanged ──
+    struct CustomProgressBar: View {
+        let progress: Double
+        var body: some View {
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Color.white.opacity(0.9))
+                        .overlay(
+                            Capsule()
+                                .stroke(Color("PanelAccent"), lineWidth: 3)
+                        )
+                    Capsule()
+                        .fill(Color.red.opacity(0.8))
+                        .frame(width: max(CGFloat(progress) * geo.size.width, 0))
+                }
+            }
+        }
+    }
+
+    // ── Utility to read the top safe‑area inset ──
     private func safeAreaTop() -> CGFloat {
         UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
@@ -204,28 +281,6 @@ struct WorkSessionView: View {
             .top ?? 0
     }
 }
-
-// ── Custom Progress Bar ──
-struct CustomProgressBar: View {
-    let progress: Double  // [0, 1]
-
-    var body: some View {
-        GeometryReader { geo in
-            ZStack(alignment: .leading) {
-                Capsule()
-                    .fill(Color.white.opacity(0.9))
-                    .overlay(
-                        Capsule()
-                            .stroke(Color("PanelAccent"), lineWidth: 3)
-                    )
-                Capsule()
-                    .fill(Color.red.opacity(0.8))
-                    .frame(width: max(CGFloat(progress) * geo.size.width, 0))
-            }
-        }
-    }
-}
-
 
 struct WorkSessionView_Previews: PreviewProvider {
     static var previews: some View {
