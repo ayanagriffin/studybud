@@ -11,7 +11,7 @@ struct WorkSessionView: View {
     var body: some View {
         ZStack(alignment: .top) {
             // ── 1) Full‑screen bedroom background ──
-            Image("bedroom")
+            Image("landing")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
@@ -22,15 +22,15 @@ struct WorkSessionView: View {
             VStack {
                 Spacer()
 
-                Image("blueAtDesk")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight: 300)
-                    .padding(.horizontal)
+//                Image("blueAtDesk")
+//                    .resizable()
+//                    .scaledToFit()
+//                    .frame(maxHeight: 300)
+//                    .padding(.horizontal)
 
                 Spacer()
 
-                HStack(spacing: 40) {
+                HStack(spacing: 24) {
                     CircleButton(iconName: "xmark", label: "Exit") {
                         vm.pause()
                         withAnimation {
@@ -44,7 +44,7 @@ struct WorkSessionView: View {
                         }
                     }
                 }
-                .padding(.bottom, 30)
+                .padding(.bottom, 80)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             // No top padding here: headerView will overlay.
@@ -133,7 +133,7 @@ struct WorkSessionView: View {
                     }
                     .font(.headline)
                     .foregroundColor(.black)
-                    .frame(width: 140, height: 44)
+                    .frame(width: 180, height: 44)
                     .background(
                         Color("ButtonFill")
                             .clipShape(RoundedRectangle(cornerRadius: 20))
@@ -185,6 +185,7 @@ struct WorkSessionView: View {
                     isCompact = false
                 }
             }
+            .offset(y: safeAreaTop() + 16)
 
         } else {
             // ── FULL version: task, timer, “Time Remaining”, percent + progress bar ──
@@ -224,10 +225,10 @@ struct WorkSessionView: View {
                     Text("\(vm.percentComplete)%")
                         .font(.caption)
                         .bold()
-                        .foregroundColor(.red)
+                        .foregroundColor(Color("PanelAccent"))
                     Text(" Complete")
                         .font(.caption)
-                        .foregroundColor(.red)
+                        .foregroundColor(Color("PanelAccent"))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -243,6 +244,8 @@ struct WorkSessionView: View {
                 Color("PanelFill")
                     .cornerRadius(20)
             )
+            .offset(y: safeAreaTop() + 16)
+
         }
     }
 

@@ -161,8 +161,8 @@ struct PreSessionView: View {
                     .cornerRadius(20)
             } else {
                 ChoiceButton(
-                    title: "Start \(vm.duration!)-Minute Session",
-                    width: (UIScreen.main.bounds.width) * 0.75,
+                    title: "Let's Go!",
+                    width: (UIScreen.main.bounds.width) * 0.5,
                     fontWeight: .semibold
                 ) {
                     vm.confirmAndStart()
