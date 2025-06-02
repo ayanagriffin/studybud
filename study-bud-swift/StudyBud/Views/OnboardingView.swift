@@ -618,7 +618,7 @@ private struct NotificationScreen: View {
                 Spacer()
             }
             .padding(.horizontal, 24)
-            
+            ChatBubbleView(text: "Break is over! Let’s get to work!", tailPosition: 0.85)
             VStack(spacing: 8) {
                 if let imgName = selectedCharacter {
                     Image(imgName)
@@ -627,7 +627,7 @@ private struct NotificationScreen: View {
                         .frame(width: 200, height: 200)
                 }
                 
-                ChatBubbleView(text: "Break is over! Let’s get to work!", tailPosition: 0.85)
+
                 
                 Text("Percy wants to check in here and there!")
                     .font(.buttonText)
@@ -643,7 +643,7 @@ private struct NotificationScreen: View {
                     onEnableNotifications()
                 } label: {
                     Text("Turn on notifications")
-                        .font(.normalText)
+                        .font(.buttonText)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
@@ -655,7 +655,7 @@ private struct NotificationScreen: View {
                     onMaybeLater()
                 } label: {
                     Text("Maybe later")
-                        .font(.smallDescription)
+                        .font(.buttonText)
                         .foregroundColor(.darkBrown)
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
