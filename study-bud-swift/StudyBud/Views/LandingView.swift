@@ -7,7 +7,7 @@ struct LandingView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Image("landing")
+                Image("empty-bedroom")
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
@@ -17,7 +17,7 @@ struct LandingView: View {
                         LandingHeader()
                             .padding(.top, 60)
                             .padding(.horizontal, 2)
-
+                        
                         Spacer()
 
                         StartButton(title: "START SESSION") {
@@ -28,6 +28,11 @@ struct LandingView: View {
                     }
                     .frame(width: geometry.size.width, height: geometry.size.height)
                 }
+                GIFImage(gifName: "BlueCelebrating")
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 400, height: 400)
+                                    .position(x: 200, y: 500)
+                                    .allowsHitTesting(false) // Prevents the GIF from intercepting touches
                 ChatBubbleView(text: "Hey John! I've been itching to do some work.", tailPosition: 0.7)
                     .frame(maxWidth: 300)
                     .position(x: 220, y: 300)

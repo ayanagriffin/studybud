@@ -14,14 +14,20 @@ struct WorkSessionView: View {
             
             ZStack(alignment: .top) {
                 // ── 1) Full‑screen bedroom background ──
-                Image("landing")
+                Image("bedroom")
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
                 
+
                 // ── 2) Main content (character + buttons) ──
                 VStack {
                     Spacer()
+                    GIFImage(gifName: "BlueWorking")
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 200, height: 200)
+                        .rotationEffect(.degrees(14))
+                        .offset(x: 120, y: safeAreaTop() + 37)
                     
                     Spacer()
                     
@@ -41,7 +47,7 @@ struct WorkSessionView: View {
                     }
                     .padding(.bottom, 120)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                //.frame(maxWidth: .infinity, maxHeight: .infinity)
                 // No top padding here: headerView will overlay.
                 
                 // ── 3) Header (either full or compact) ──

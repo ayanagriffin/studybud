@@ -213,14 +213,10 @@ struct PreSessionView: View {
                     .background(Color.white.opacity(0.8))
                     .cornerRadius(20)
             } else {
-                ChoiceButton(
-                    title: "Let's Go!",
-                    width: (UIScreen.main.bounds.width) * 0.5,
-                    fontWeight: .semibold
-                ) {
+                StartButton(title: "Let's Go!") {
                     // 1) Begin the 3–2–1 countdown
                     startCountdown()
-                }
+                }.frame(maxWidth: 250)
             }
         }
     }
