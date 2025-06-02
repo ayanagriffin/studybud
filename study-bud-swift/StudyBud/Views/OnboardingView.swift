@@ -355,7 +355,7 @@ private struct CelebrateCharacterScreen: View {
                     .scaledToFit()
                     .frame(width: 80, height: 80)
                     .foregroundColor(.accentPeach)
-                    .offset(x: -50, y: 125)
+                    .offset(x: 20, y: 125)
                 
                 // top‑center star
                 Image(systemName: "star.fill")
@@ -443,6 +443,7 @@ private struct NameYourBudScreen: View {
             }
             
             VStack(spacing: 8) {
+                Spacer()
                 Text("What do you want to name your StudyBud?")
                     .font(.buttonText)
                     .foregroundColor(.darkBrown)
@@ -460,7 +461,7 @@ private struct NameYourBudScreen: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.accentPeach, lineWidth: 3)
                 )
-                .font(.smallDescription)
+                .font(.normalText)
                 .padding(.horizontal, 24)
             
             Spacer()
