@@ -15,6 +15,10 @@ class EndSessionViewModel: ObservableObject {
 
     var workSessionVM: WorkSessionViewModel?
     var breakDuration: Int?
+    
+    enum SessionStep {
+        case initial, chooseWorkDuration, chooseBreakDuration, confirmWorkStart
+    }
 
     func selectNext(_ choice: String) {
         switch choice {
@@ -46,4 +50,18 @@ class EndSessionViewModel: ObservableObject {
     func startWorkSession() {
         isWorkSessionActive = true
     }
+    
+    var bubbleText: String {
+        switch step {
+        case .initial:
+            return "Wow! Great work, whaddya wanna do next?"
+        case .chooseWorkDuration:
+            return "Okay! How long do you wanna keep working?"
+        case .chooseBreakDuration:
+            return "Cool! How long do you wanna rest?"
+        case .confirmWorkStart:
+            return "Got it! Ready when you are."
+        }
+    }
+
 }

@@ -86,7 +86,7 @@ struct BreakView: View {
                 self.isActive = false
             }
         }
-
+        .navigationBarBackButtonHidden(true)
 
     }
 

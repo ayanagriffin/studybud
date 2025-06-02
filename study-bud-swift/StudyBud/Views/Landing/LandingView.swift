@@ -15,7 +15,7 @@ struct LandingView: View {
                 GeometryReader { geometry in
                     VStack(alignment: .center, spacing: 10) {
                         LandingHeader()
-                            .padding(.top, 60)
+                            .padding(.top, 70)
                             .padding(.horizontal, 2)
 
                         Spacer()
@@ -24,7 +24,7 @@ struct LandingView: View {
                             navigate = true
                         }
                         .padding(.horizontal, 40)
-                        .padding(.bottom, max(geometry.safeAreaInsets.bottom, 80))
+                        .padding(.bottom, max(geometry.safeAreaInsets.bottom, 120))
                     }
                     .frame(width: geometry.size.width, height: geometry.size.height)
                 }
@@ -35,6 +35,7 @@ struct LandingView: View {
             .navigationDestination(isPresented: $navigate) {
                 PreSessionView()
             }
+            .navigationBarBackButtonHidden(true)
         }
     }
 }

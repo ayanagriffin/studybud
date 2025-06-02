@@ -4,12 +4,13 @@ struct LandingHeader: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 12) {
-                VStack(alignment: .trailing, spacing: 1) {
-                    Text("TUESDAY")
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("MONDAY")
                         .font(.dateHeader)
-                    Text("MAY 21ST")
-                        .font(.buttonText)
+                    Text("JUN 2ND")
+                        .font(.normalText)
                 }
+                .padding(.top, 10)
 
                 Spacer()
                 HStack(spacing: 8) {
