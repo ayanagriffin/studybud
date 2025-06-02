@@ -6,20 +6,23 @@ struct SessionResultsView: View {
 
     var body: some View {
         ZStack {
-            if step == 1 {
-                SessionResultsIntroView {
+            switch step {
+            case 1:
+                SessionResultsCoinsView {
                     step = 2
                 }
-            } else {
+            case 2:
+                SessionResultsIntroView {
+                    step = 3
+                }
+            case 3:
                 SessionResultsFeelingView(selectedFeeling: $selectedFeeling) {
                     print("Feeling selected:", selectedFeeling ?? -1)
                 }
+            default:
+                Text("Done")
             }
         }
         .navigationBarBackButtonHidden(true)
     }
-}
-
-#Preview {
-    SessionResultsView()
 }

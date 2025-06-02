@@ -101,7 +101,7 @@ struct BreakView: View {
             .onAppear {
                 let totalSeconds = Int(duration * 60)
                 print("Break starting — will dismiss in \(totalSeconds) seconds")
-                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) { // TEMP for testing
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) { 
                     print("Timer fired, dismissing BreakView")
                     self.isActive = false
                 }
