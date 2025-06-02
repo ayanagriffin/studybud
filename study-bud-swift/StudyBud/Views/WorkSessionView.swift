@@ -1,7 +1,6 @@
 import SwiftUI
 import Combine
 
-
 struct WorkSessionView: View {
     @StateObject var vm: WorkSessionViewModel
     @Environment(\.dismiss) private var dismiss
@@ -15,6 +14,9 @@ struct WorkSessionView: View {
     
     // ── Navigation to end screen ──
     @State private var navigateToEnd = false
+    
+    // ── NEW: Navigation to LandingView ──
+    @State private var navigateToLanding = false
     
     // ── NEW: State for chat bubble ──
     @State private var showChatBubble = false
@@ -58,7 +60,6 @@ struct WorkSessionView: View {
                             .frame(width: 200, height: 200)
                             .rotationEffect(.degrees(14))
                             .offset(x: 120, y: safeAreaTop() + 37)
-                            
                         
                         // ── NEW: Chat bubble overlay ──
                         if showChatBubble {
@@ -106,7 +107,8 @@ struct WorkSessionView: View {
                     HStack(spacing: 16) {
                         Button(action: {
                             vm.exit()
-                            dismiss()
+                            // Instead of dismiss(), navigate to LandingView:
+                            navigateToLanding = true
                         }) {
                             Text("Yes")
                                 .font(.buttonText)
@@ -126,7 +128,13 @@ struct WorkSessionView: View {
                 }
                 .zIndex(2)
                 
+                // ── Navigation to EndSessionView ──
                 NavigationLink(destination: EndSessionView(), isActive: $navigateToEnd) {
+                    EmptyView()
+                }
+                
+                // ── Navigation to LandingView when user taps “Yes” on exit ──
+                NavigationLink(destination: LandingView(), isActive: $navigateToLanding) {
                     EmptyView()
                 }
                 
@@ -271,6 +279,7 @@ struct WorkSessionView: View {
             
         }
     }
+    
     // ── Custom progress bar remains unchanged ──
     struct CustomProgressBar: View {
         let progress: Double
@@ -292,75 +301,73 @@ struct WorkSessionView: View {
     }
     
     // ── Utility to read the top safe‑area inset ──
-        private func safeAreaTop() -> CGFloat {
-            UIApplication.shared.connectedScenes
-                .compactMap { $0 as? UIWindowScene }
-                .first?
-                .windows
-                .first { $0.isKeyWindow }?
-                .safeAreaInsets
-                .top ?? 0
+    private func safeAreaTop() -> CGFloat {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first?
+            .windows
+            .first { $0.isKeyWindow }?
+            .safeAreaInsets
+            .top ?? 0
+    }
+    
+    
+    // ── NEW: Start the Combine timer to fire every intervalSeconds ──
+    private func startMotivationTimer() {
+        // If there's already a timer active, cancel it first
+        motivationTimerCancellable?.cancel()
+        
+        // Only schedule if session is not complete or paused
+        guard !vm.isComplete, !vm.isPaused else { return }
+        
+        motivationTimerCancellable = Timer
+            .publish(every: intervalSeconds, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                fireMotivationBubble()
+            }
+    }
+    
+    // ── NEW: Cancel the timer if needed ──
+    private func cancelMotivationTimer() {
+        motivationTimerCancellable?.cancel()
+        motivationTimerCancellable = nil
+    }
+    
+    // ── NEW: When timer fires, pick a message & show bubble ──
+    private func fireMotivationBubble() {
+        print("firing motivation bubble")
+        // If already showing a bubble, just ignore this tick
+        guard !showChatBubble else { return }
+        
+        // Pick a random—or you can rotate—message
+        currentMotivation = motivationalMessages.randomElement() ?? ""
+        
+        withAnimation(.easeInOut(duration: 0.3)) {
+            showChatBubble = true
         }
         
-        
-        // ── NEW: Start the Combine timer to fire every intervalSeconds ──
-        private func startMotivationTimer() {
-            // If there's already a timer active, cancel it first
-            motivationTimerCancellable?.cancel()
-            
-            // Only schedule if session is not complete or paused
-            guard !vm.isComplete, !vm.isPaused else { return }
-            
-            // Timer.publish(every:interval, on: .main, in: .common)
-            //   .autoconnect() produces a Publisher<Date, Never>
-            motivationTimerCancellable = Timer
-                .publish(every: intervalSeconds, on: .main, in: .common)
-                .autoconnect()
-                .sink { _ in
-                    fireMotivationBubble()
-                }
-        }
-        
-        // ── NEW: Cancel the timer if needed ──
-        private func cancelMotivationTimer() {
-            motivationTimerCancellable?.cancel()
-            motivationTimerCancellable = nil
-        }
-        
-        // ── NEW: When timer fires, pick a message & show bubble ──
-        private func fireMotivationBubble() {
-            print("firing motivation bubble")
-            // If already showing a bubble, just ignore this tick
-            guard !showChatBubble else { return }
-            
-            // Pick a random—or you can rotate—message
-            currentMotivation = motivationalMessages.randomElement() ?? ""
-            
+        // Hide the bubble after a short delay (e.g. 3s)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             withAnimation(.easeInOut(duration: 0.3)) {
-                showChatBubble = true
-            }
-            
-            // Hide the bubble after a short delay (e.g. 3s)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    showChatBubble = false
-                }
-            }
-        }
-        
-        // ── NEW: Hide bubble immediately (e.g. on pause or exit) ──
-        private func hideChatBubbleImmediately() {
-            motivationTimerCancellable?.cancel()
-            withAnimation(.easeInOut(duration: 0.1)) {
                 showChatBubble = false
             }
         }
     }
-
-    struct WorkSessionView_Previews: PreviewProvider {
-        static var previews: some View {
-            WorkSessionView(
-                vm: WorkSessionViewModel(taskName: "Homework", durationMinutes: 3)
-            )
+    
+    // ── NEW: Hide bubble immediately (e.g. on pause or exit) ──
+    private func hideChatBubbleImmediately() {
+        motivationTimerCancellable?.cancel()
+        withAnimation(.easeInOut(duration: 0.1)) {
+            showChatBubble = false
         }
     }
+}
+
+struct WorkSessionView_Previews: PreviewProvider {
+    static var previews: some View {
+        WorkSessionView(
+            vm: WorkSessionViewModel(taskName: "Homework", durationMinutes: 3)
+        )
+    }
+}
