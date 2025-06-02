@@ -81,28 +81,21 @@ struct PreSessionView: View {
             // A) Two side‑by‑side yellow‑outlined buttons
             HStack(spacing: 16) {
                 // “Homework” button on the left
-                Button(action: {
-                    vm.selectTask(vm.taskOptions[1]) // index 1 == “Homework”
-                }) {
-                    Text(vm.taskOptions[1])
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.black)
-                        .frame(width: (UIScreen.main.bounds.width - 64) * 0.44)
-                        .padding(.vertical, 12)
+                ChoiceButton(
+                    title: vm.taskOptions[0],
+                    width: (UIScreen.main.bounds.width - 64) * 0.44
+                ) {
+                    vm.selectTask(vm.taskOptions[0])
                 }
-                .buttonStyle(YellowOutlinedButtonStyle())
 
                 // “Chores” button on the right
-                Button(action: {
-                    vm.selectTask(vm.taskOptions[0]) // index 0 == “Chores”
-                }) {
-                    Text(vm.taskOptions[0])
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.black)
-                        .frame(width: (UIScreen.main.bounds.width - 64) * 0.44)
-                        .padding(.vertical, 12)
+                ChoiceButton(
+                    title: vm.taskOptions[1],
+                    width: (UIScreen.main.bounds.width - 64) * 0.44
+                ) {
+                    vm.selectTask(vm.taskOptions[1])
                 }
-                .buttonStyle(YellowOutlinedButtonStyle())
+
             }
             .padding(.horizontal, 24)
 
@@ -134,23 +127,22 @@ struct PreSessionView: View {
         VStack(spacing: 16) {
             // A) Two side‑by‑side yellow‑outlined buttons for preset durations
             HStack(spacing: 16) {
-                Button(action: { vm.selectDuration(30) }) {
-                    Text("30 Minutes")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.black)
-                        .frame(width: (UIScreen.main.bounds.width - 64) * 0.44)
-                        .padding(.vertical, 12)
+                ChoiceButton(
+                    title: "30 Minutes",
+                    width: (UIScreen.main.bounds.width - 64) * 0.44,
+                    fontWeight: .semibold
+                ) {
+                    vm.selectDuration(30)
                 }
-                .buttonStyle(YellowOutlinedButtonStyle())
 
-                Button(action: { vm.selectDuration(45) }) {
-                    Text("45 Minutes")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.black)
-                        .frame(width: (UIScreen.main.bounds.width - 64) * 0.44)
-                        .padding(.vertical, 12)
+                ChoiceButton(
+                    title: "45 Minutes",
+                    width: (UIScreen.main.bounds.width - 64) * 0.44,
+                    fontWeight: .semibold
+                ) {
+                    vm.selectDuration(45)
                 }
-                .buttonStyle(YellowOutlinedButtonStyle())
+
             }
             .padding(.horizontal, 24)
 
@@ -193,16 +185,14 @@ struct PreSessionView: View {
                     .background(Color.white.opacity(0.8))
                     .cornerRadius(20)
             } else {
-                Button(action: {
+                ChoiceButton(
+                    title: "Start \(vm.duration!)-Minute Session",
+                    width: (UIScreen.main.bounds.width - 64) * 0.75,
+                    fontWeight: .semibold
+                ) {
                     vm.confirmAndStart()
-                }) {
-                    Text("Start \(vm.duration!)-Minute Session")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.black)
-                        .frame(width: (UIScreen.main.bounds.width - 64) * 0.75)
-                        .padding(.vertical, 12)
                 }
-                .buttonStyle(YellowOutlinedButtonStyle())
+
             }
         }
     }

@@ -11,7 +11,7 @@ extension Font {
     static let dateHeader = Font.custom("Jua-Regular", size: 36)
     static let mainHeader = Font.custom("Jua-Regular", size: 30)
     static let buttonText = Font.custom("Jua-Regular", size: 20)
-    static let speechText = Font.custom("Nunito-VariableFont_wght", size: 20)
-    static let normalText = Font.custom("Nunito-VariableFont_wght", size: 15)
-    static let smallDescription = Font.custom("Nunito-VariableFont_wght", size: 12)
+    static let speechText = Font.custom("Nunito-Bold", size: 20)
+    static let normalText = Font.custom("Nunito-Regular", size: 15)
+    static let smallDescription = Font.custom("Nunito-Regular", size: 12)
 }

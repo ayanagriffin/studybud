@@ -5,7 +5,8 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>Jua-Regular.ttf</string>
-		<string>Nunito-VariableFont_wght.ttf</string>
+		<string>Nunito-Regular.ttf</string>
+		<string>Nunito-Bold.ttf</string>
 	</array>
 </dict>
 </plist>

@@ -16,7 +16,7 @@ struct StartButtonStyle: ViewModifier {
             .foregroundColor(.black)
             .overlay(
                 RoundedRectangle(cornerRadius: CornerRadius.button)
-                    .stroke(Color.orangeYellow, lineWidth: 6)
+                    .stroke(Color.orangeYellow, lineWidth: 8)
             )
             .cornerRadius(CornerRadius.button)
     }

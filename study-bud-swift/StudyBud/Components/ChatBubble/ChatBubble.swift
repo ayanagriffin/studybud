@@ -6,7 +6,7 @@ struct ChatBubbleView: View {
 
     var body: some View {
         Text(text)
-            .font(.speechText).fontWeight(.bold)
+            .font(.speechText)
             .foregroundColor(.black)
             .multilineTextAlignment(.center)
             .padding(EdgeInsets(top: 16, leading: 16, bottom: 48, trailing: 16))

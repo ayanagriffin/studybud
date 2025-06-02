@@ -16,7 +16,7 @@ struct YellowOutlinedButtonStyle: ButtonStyle {
             .background(Color("InputButtonFill"))
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color("InputButtonOutline"), lineWidth: 6)
+                    .stroke(Color("InputButtonOutline"), lineWidth: 8)
             )
             .cornerRadius(20)
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
