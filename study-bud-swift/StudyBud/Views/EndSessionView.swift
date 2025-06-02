@@ -4,6 +4,10 @@ struct EndSessionView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var vm = EndSessionViewModel()
     @State private var customDurationText = ""
+    @State private var isCompact = false
+    @State private var showExitConfirm = false
+    @State private var confirmExit = false
+    @State private var showPausedDialog = false
 
 
     var body: some View {
@@ -15,6 +19,38 @@ struct EndSessionView: View {
                     .ignoresSafeArea()
 
                 Image("blue")
+                
+                DialogView(
+                    isPresented: $showExitConfirm,
+                    title: "Are you sure?",
+                    message: "Are you sure you want to end?",
+                    characterImageName: "blue",
+                    onClose: {
+                        showExitConfirm = false
+                    }
+                ) {
+                    HStack(spacing: 16) {
+                        Button(action: {
+                            vm.isSessionComplete = true
+                        }) {
+                            Text("Yes")
+                                .font(.buttonText)
+                                .foregroundColor(.black)
+                                .frame(minWidth: 100, minHeight: 44)
+                        }
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color.white)
+                        )
+                        
+                        ChoiceButton(title: "No", width: 100) {
+                            withAnimation { showExitConfirm = false }
+                        }
+                    }
+                }
+                
+                
+                .zIndex(2)
 
                 VStack(spacing: 0) {
                     HStack {
@@ -47,7 +83,7 @@ struct EndSessionView: View {
                             confirmWorkStartView // <— create this in your view
                         }
                     }
-                    .padding(.bottom, safeAreaBottom() + 64)
+                    .padding(.bottom, safeAreaBottom() + 120)
                 }
 
                 NavigationLink("", isActive: $vm.isWorkSessionActive) {
@@ -67,15 +103,15 @@ struct EndSessionView: View {
     private var nextOptions: some View {
         VStack(spacing: 8) {
             HStack(spacing: 8) {
-                ChoiceButton(title: "Keep Going", width: 160) {
+                ChoiceButton(title: "Keep going!", width: 160) {
                     vm.selectNext("Keep Going")
                 }
-                ChoiceButton(title: "Take a Break", width: 160) {
+                ChoiceButton(title: "Take a break", width: 160) {
                     vm.selectNext("Take a Break")
                 }
             }
-            ChoiceButton(title: "End Session", width: 160) {
-                vm.isSessionComplete = true
+            ChoiceButton(title: "End session", width: 160) {
+                showExitConfirm = true
             }
         }
     }

@@ -2,7 +2,7 @@ import SwiftUI
 import Combine
 
 enum EndSessionStep {
-    case initial, chooseWorkDuration, chooseBreakDuration, confirmWorkStart // ✅ Added confirm step
+    case initial, chooseWorkDuration, chooseBreakDuration, confirmWorkStart
 }
 
 
@@ -23,7 +23,6 @@ class EndSessionViewModel: ObservableObject {
         case "Take a Break":
             step = .chooseBreakDuration
         case "End Session":
-            // Will dismiss from the View
             break
         default:
             break
@@ -35,7 +34,7 @@ class EndSessionViewModel: ObservableObject {
         switch step {
         case .chooseWorkDuration:
             workSessionVM = WorkSessionViewModel(taskName: "New Task", durationMinutes: minutes)
-            step = .confirmWorkStart // ✅ Show "Let's go!" screen
+            step = .confirmWorkStart
         case .chooseBreakDuration:
             breakDuration = minutes
             isBreakActive = true
@@ -44,7 +43,6 @@ class EndSessionViewModel: ObservableObject {
         }
     }
 
-    // ✅ Call this when user taps "Let's go!"
     func startWorkSession() {
         isWorkSessionActive = true
     }

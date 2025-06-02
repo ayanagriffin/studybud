@@ -1,37 +1,28 @@
 import SwiftUI
 
 struct SessionResultsView: View {
+    @State private var imageIndex = 1
+
     var body: some View {
         ZStack {
-            Image("empty-bedroom")
+            Image(imageIndex == 1 ? "session-results-1" : "session-results-2")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
+            
 
-            VStack(spacing: 20) {
-                Image("blue")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 250)
-
-                Text("Session Complete!")
-                    .font(.largeTitle)
-                    .bold()
-                    .foregroundColor(.white)
-
-                Text("Amazing job staying focused. Let’s keep it up!")
-                    .multilineTextAlignment(.center)
-                    .font(.title3)
-                    .foregroundColor(.white.opacity(0.8))
-                    .padding(.horizontal)
-
-                NavigationLink("Back to Home") {
-                    EndSessionView()
+            VStack {
+                Spacer()
+                ChoiceButton(title: "Next", width: 200) {
+                    imageIndex = 2
                 }
-                .buttonStyle(.borderedProminent)
-                .padding(.top)
+                .padding(.bottom, 100)
             }
-            .padding(.horizontal, 32)
         }
+        .navigationBarBackButtonHidden(true)
     }
+}
+
+#Preview {
+    SessionResultsView()
 }

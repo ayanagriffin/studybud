@@ -10,13 +10,14 @@ class WorkSessionViewModel: ObservableObject {
     // Published state
     @Published private(set) var secondsRemaining: TimeInterval
     @Published var isPaused = false
+    @Published var isComplete = false
 
     // Timer
     private var timerCancellable: AnyCancellable?
 
     init(taskName: String, durationMinutes: Int) {
         self.taskName = taskName
-        self.totalSeconds = TimeInterval(durationMinutes * 60)
+        self.totalSeconds = TimeInterval(durationMinutes * 1)
         self.secondsRemaining = totalSeconds
         startTimer()
     }
@@ -31,6 +32,7 @@ class WorkSessionViewModel: ObservableObject {
                     self.secondsRemaining -= 1
                 } else {
                     self.timerCancellable?.cancel()
+                    self.isComplete = true
                 }
             }
     }
@@ -47,7 +49,6 @@ class WorkSessionViewModel: ObservableObject {
 
     func exit() {
         timerCancellable?.cancel()
-        // you can send a delegate/callback here to actually dismiss the view
     }
 
     // MARK: - Helpers for the View

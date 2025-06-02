@@ -3,121 +3,125 @@ import SwiftUI
 struct WorkSessionView: View {
     @StateObject var vm: WorkSessionViewModel
     @Environment(\.dismiss) private var dismiss
-
     @State private var isCompact = false
     @State private var showExitConfirm = false
     @State private var showPausedDialog = false
-
-    var body: some View {
-        ZStack(alignment: .top) {
-            // ── 1) Full‑screen bedroom background ──
-            Image("landing")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-
-            // ── 2) Main content (character + buttons) ──
-            //    We do NOT give this VStack any top padding,
-            //    because headerView will float on top of it.
-            VStack {
-                Spacer()
-
-//                Image("blueAtDesk")
-//                    .resizable()
-//                    .scaledToFit()
-//                    .frame(maxHeight: 300)
-//                    .padding(.horizontal)
-
-                Spacer()
-
-                HStack(spacing: 24) {
-                    CircleButton(iconName: "xmark", label: "Exit") {
-                        vm.pause()
-                        withAnimation {
-                            showExitConfirm = true
-                        }
-                    }
-                    CircleButton(iconName: "pause.fill", label: "Pause") {
-                        vm.pause()
-                        withAnimation {
-                            showPausedDialog = true
-                        }
-                    }
-                }
-                .padding(.bottom, 120)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            // No top padding here: headerView will overlay.
-
-            // ── 3) Header (either full or compact) ──
-            headerView
-                .fixedSize(horizontal: false, vertical: true)
-                .zIndex(1)
-
-            // ── 4) Exit confirmation overlay ──
-            DialogView(
-                isPresented: $showExitConfirm,
-                title: "Are you sure?",
-                message: "Are you sure you want to exit?",
-                characterImageName: "blue",
-                onClose: {
-                    vm.resume()
-                }
-            ) {
-                HStack(spacing: 16) {
-                    Button(action: {
-                        vm.exit()
-                        dismiss()
-                    }) {
-                        Text("Yes")
-                            .font(.buttonText)
-                            .foregroundColor(.black)
-                            .frame(minWidth: 100, minHeight: 44)
-                    }
-                    .background(
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.white)
-                    )
-
-                    ChoiceButton(title: "No", width: 100) {
-                        vm.resume()
-                        withAnimation { showExitConfirm = false }
-                    }
-                }
-            }
-
-
-                        .zIndex(2)
-
-                        // ── 5) Pause confirmation dialog ──
-            DialogView(
-                isPresented: $showPausedDialog,
-                title: "Paused",
-                message: "Ok, but don’t take too long! Come back soon!",
-                characterImageName: "blue",
-                onClose: {
-                    vm.resume()
-                }
-            ) {
-                ChoiceButton(
-                    title: "Resume",
-                    width: 220,
-                    fontWeight: .semibold
-                ) {
-                    vm.resume()
-                    withAnimation {
-                        showPausedDialog = false
-                    }
-                }
-            }
-
-                        .zIndex(2)
-                    }
-                    // Hide the default back button if inside a NavigationStack
-                    .navigationBarBackButtonHidden(true)
-                }
+    @State private var navigateToEnd = false
     
-
+    
+    var body: some View {
+        NavigationStack {
+            
+            ZStack(alignment: .top) {
+                // ── 1) Full‑screen bedroom background ──
+                Image("landing")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                
+                // ── 2) Main content (character + buttons) ──
+                VStack {
+                    Spacer()
+                    
+                    Spacer()
+                    
+                    HStack(spacing: 24) {
+                        CircleButton(iconName: "xmark", label: "Exit") {
+                            vm.pause()
+                            withAnimation {
+                                showExitConfirm = true
+                            }
+                        }
+                        CircleButton(iconName: "pause.fill", label: "Pause") {
+                            vm.pause()
+                            withAnimation {
+                                showPausedDialog = true
+                            }
+                        }
+                    }
+                    .padding(.bottom, 120)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                // No top padding here: headerView will overlay.
+                
+                // ── 3) Header (either full or compact) ──
+                headerView
+                    .fixedSize(horizontal: false, vertical: true)
+                    .zIndex(1)
+                
+                // ── 4) Exit confirmation overlay ──
+                DialogView(
+                    isPresented: $showExitConfirm,
+                    title: "Are you sure?",
+                    message: "Are you sure you want to exit?",
+                    characterImageName: "blue",
+                    onClose: {
+                        vm.resume()
+                    }
+                ) {
+                    HStack(spacing: 16) {
+                        Button(action: {
+                            vm.exit()
+                            dismiss()
+                        }) {
+                            Text("Yes")
+                                .font(.buttonText)
+                                .foregroundColor(.black)
+                                .frame(minWidth: 100, minHeight: 44)
+                        }
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color.white)
+                        )
+                        
+                        ChoiceButton(title: "No", width: 100) {
+                            vm.resume()
+                            withAnimation { showExitConfirm = false }
+                        }
+                    }
+                }
+                .zIndex(2)
+                
+                NavigationLink(destination: EndSessionView(), isActive: $navigateToEnd) {
+                    EmptyView()
+                }
+                
+                // ── 5) Pause confirmation dialog ──
+                DialogView(
+                    isPresented: $showPausedDialog,
+                    title: "Paused",
+                    message: "Ok, but don’t take too long! Come back soon!",
+                    characterImageName: "blue",
+                    onClose: {
+                        vm.resume()
+                    }
+                ) {
+                    ChoiceButton(
+                        title: "Resume",
+                        width: 220,
+                        fontWeight: .semibold
+                    ) {
+                        vm.resume()
+                        withAnimation {
+                            showPausedDialog = false
+                        }
+                    }
+                }
+                
+                .zIndex(2)
+            }
+            // Hide the default back button if inside a NavigationStack
+            .navigationBarBackButtonHidden(true)
+            .onChange(of: vm.isComplete) { complete in
+                if complete {
+                    print("session completed")
+                    navigateToEnd = true
+                }
+            }
+        }
+    }
+    
+    
     // ── Header (full or compact) ──
     @ViewBuilder
     private var headerView: some View {
@@ -146,7 +150,7 @@ struct WorkSessionView: View {
                 }
             }
             .offset(y: safeAreaTop() + 16)
-
+            
         } else {
             // ── FULL version: task, timer, “Time Remaining”, percent + progress bar ──
             VStack(spacing: 12) {
@@ -155,20 +159,20 @@ struct WorkSessionView: View {
                         Text("Task: \(vm.taskName)")
                             .font(.subheadline)
                             .foregroundColor(.black)
-
+                        
                         Text(vm.formattedTime)
                             .font(.largeTitle)
                             .bold()
                             .foregroundColor(.black)
-
+                        
                         Text("Time Remaining")
                             .font(.title3)
                             .bold()
                             .foregroundColor(.black)
                     }
-
+                    
                     Spacer()
-
+                    
                     Button {
                         withAnimation(.easeInOut) {
                             isCompact = true
@@ -180,7 +184,7 @@ struct WorkSessionView: View {
                             .offset(y: -2)
                     }
                 }
-
+                
                 HStack(spacing: 0) {
                     Text("\(vm.percentComplete)%")
                         .font(.caption)
@@ -191,25 +195,24 @@ struct WorkSessionView: View {
                         .foregroundColor(Color("PanelAccent"))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-
+                
                 CustomProgressBar(progress: vm.progress)
                     .frame(height: 14)
             }
             .padding(.vertical, 16)
             .padding(.horizontal, 20)
             .frame(
-                width: UIScreen.main.bounds.width - 32  // <–– force full banner to be screen.width – 32
+                width: UIScreen.main.bounds.width - 32
             )
             .background(
                 Color("PanelFill")
                     .cornerRadius(20)
             )
             .offset(y: safeAreaTop() + 16)
-
+            
         }
     }
-
-
+    
     // ── Custom progress bar remains unchanged ──
     struct CustomProgressBar: View {
         let progress: Double
@@ -229,7 +232,7 @@ struct WorkSessionView: View {
             }
         }
     }
-
+    
     // ── Utility to read the top safe‑area inset ──
     private func safeAreaTop() -> CGFloat {
         UIApplication.shared.connectedScenes
@@ -245,7 +248,7 @@ struct WorkSessionView: View {
 struct WorkSessionView_Previews: PreviewProvider {
     static var previews: some View {
         WorkSessionView(
-            vm: WorkSessionViewModel(taskName: "Homework", durationMinutes: 50)
+            vm: WorkSessionViewModel(taskName: "Homework", durationMinutes: 3)
         )
     }
 }

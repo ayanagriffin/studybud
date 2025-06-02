@@ -3,14 +3,14 @@ import Combine
 
 struct BreakHeader: View {
     let totalTime: CGFloat
-
+    
     @State private var currentTime: CGFloat = 0
     @State private var timer: Publishers.Autoconnect<Timer.TimerPublisher>?
-
+    
     private var timeRemaining: Int {
         max(0, Int(ceil(totalTime - currentTime)))
     }
-
+    
     var body: some View {
         VStack(spacing: 8) {
             Text("\(timeRemaining) min left in break")
@@ -18,8 +18,8 @@ struct BreakHeader: View {
                 .fontWeight(.semibold)
                 .foregroundColor(.black)
                 .padding(.top, 16)
-
-//            TimeProgressBar(currentTime: currentTime, totalTime: totalTime, label: "Break")
+            
+            TimeProgressBar(currentTime: currentTime, totalTime: totalTime, label: "Break")
         }
         .padding()
         .onAppear {
@@ -30,7 +30,7 @@ struct BreakHeader: View {
                 timer = nil
                 return
             }
-
+            
             withAnimation(.easeInOut(duration: 0.5)) {
                 currentTime += 3.0 / 60.0 
             }
