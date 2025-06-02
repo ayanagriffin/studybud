@@ -91,8 +91,8 @@ class PreSessionViewModel: ObservableObject {
             }
 
         switch recents.count {
-        case let n where n >= 2:
-            return Array(recents.prefix(2))
+        //case let n where n >= 2:
+          //  return Array(recents.prefix(2))
 
         case 1:
             let first = recents[0]
