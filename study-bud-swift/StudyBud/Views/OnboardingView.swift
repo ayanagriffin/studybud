@@ -31,13 +31,15 @@ struct OnboardingView: View {
     /// 2 = celebrate character
     /// 3 = name StudyBud
     /// 4 = choose personality
-    /// 5 = enable notifications
+    /// 5 = enter user's name
+    /// 6 = enable notifications
     @State private var step: Int = 0
     
     // The user’s selections so far:
     @State private var selectedCharacter: String? = nil
     @State private var budName: String = ""
     @State private var chosenPersonalities: [String] = []
+    @State private var userName: String = ""
     @State private var notificationsEnabled: Bool = false
     
     // When true, we immediately navigate to LandingView
@@ -59,7 +61,7 @@ struct OnboardingView: View {
                 
                 VStack {
                     // ─── PROGRESS BAR ───
-                    ProgressView(value: Double(step), total: 5.0)
+                    ProgressView(value: Double(step), total: 6.0)
                         .accentColor(.progressGreen)
                         .tint(.progressGreen)
                         .padding(.horizontal, 24)
@@ -116,6 +118,17 @@ struct OnboardingView: View {
                         )
                         
                     case 5:
+                        UserNameScreen(
+                            budName: budName,
+                            userName: $userName,
+                            onNext: {
+                                guard !userName.isEmpty else { return }
+                                withAnimation { step = 6 }
+                            },
+                            onBack: { withAnimation { step = 4 } }
+                        )
+                        
+                    case 6:
                         NotificationScreen(
                             selectedCharacter: selectedCharacter,
                             onEnableNotifications: {
@@ -126,7 +139,7 @@ struct OnboardingView: View {
                                 notificationsEnabled = false
                                 navigateToLanding = true
                             },
-                            onBack: { withAnimation { step = 4 } }
+                            onBack: { withAnimation { step = 5 } }
                         )
                         
                     default:
@@ -372,24 +385,18 @@ private struct CelebrateCharacterScreen: View {
                     .frame(width: 120, height: 120)
                     .foregroundColor(.accentPeach)
                     .offset(x: 50, y: 200)
-                
             }
+            
             ChatBubbleView(text: "Great choice if you ask me!", tailPosition: 0.5)
                 .padding(.horizontal, 40)
+            
             // Character GIF/image
             if let imgName = selectedCharacter {
                 GIFImage(gifName: "BlueCelebrating")
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 350, height: 350)
-                                    .position(x: 200, y: 100)
-                                    .allowsHitTesting(false) // Prevents the GIF from intercepting touches
-//                Image(imgName)
-//                    .resizable()
-//                    .scaledToFit()
-//                    .frame(width: 300, height: 300)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 350, height: 350)
+                    .allowsHitTesting(false)
             }
-            // Chat bubble below character
-            
             
             Spacer()
             
@@ -435,7 +442,7 @@ private struct NameYourBudScreen: View {
             }
             .padding(.horizontal, 24)
             Spacer()
-
+            
             if let imgName = selectedCharacter {
                 Image(imgName)
                     .resizable()
@@ -594,7 +601,85 @@ private struct PersonalityScreen: View {
 }
 
 
-// MARK: - 5) ENABLE NOTIFICATIONS (step 5)
+// MARK: - 5) ENTER USER'S NAME (step 5)
+private struct UserNameScreen: View {
+    var budName: String
+    @Binding var userName: String
+    var onNext: () -> Void
+    var onBack: () -> Void
+    
+    var body: some View {
+        VStack(spacing: 24) {
+            // Back arrow
+            HStack {
+                Button {
+                    onBack()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.title2)
+                        .foregroundColor(.darkBrown)
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 24)
+            
+            Spacer()
+            
+            VStack(spacing: 8) {
+                ChatBubbleView(text: "I love my name! Percy, Percy, Percy, I could say it forever and ever. What’s your name?", tailPosition: 0.5)
+                    .padding(.horizontal, 32)
+                
+                    Image("blue")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 140, height: 140)
+                
+                
+                Text("Glad you like your name \(budName)!")
+                    .font(.buttonText)
+                    .foregroundColor(.darkBrown)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+                
+                Text("My name is…")
+                    .font(.normalText)
+                    .foregroundColor(.midGray)
+            }
+            
+            TextField("John", text: $userName)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.accentPeach, lineWidth: 3)
+                )
+                .font(.normalText)
+                .padding(.horizontal, 24)
+            
+            Spacer()
+            
+            Button {
+                onNext()
+            } label: {
+                Text("Next")
+                    .font(.buttonText)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .background(
+                        userName.isEmpty ? Color.gray.opacity(0.4) : Color.primaryBlue
+                    )
+                    .cornerRadius(25)
+            }
+            .disabled(userName.isEmpty)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 16)
+        }
+        .frame(maxHeight: .infinity)
+    }
+}
+
+
+// MARK: - 6) ENABLE NOTIFICATIONS (step 6)
 private struct NotificationScreen: View {
     var selectedCharacter: String?
     
@@ -618,7 +703,9 @@ private struct NotificationScreen: View {
                 Spacer()
             }
             .padding(.horizontal, 24)
+            
             ChatBubbleView(text: "Break is over! Let’s get to work!", tailPosition: 0.85)
+            
             VStack(spacing: 8) {
                 if let imgName = selectedCharacter {
                     Image(imgName)
@@ -626,8 +713,6 @@ private struct NotificationScreen: View {
                         .scaledToFit()
                         .frame(width: 200, height: 200)
                 }
-                
-
                 
                 Text("Percy wants to check in here and there!")
                     .font(.buttonText)
@@ -669,7 +754,6 @@ private struct NotificationScreen: View {
         }
     }
 }
-
 
 // MARK: - PREVIEW
 struct OnboardingView_Previews: PreviewProvider {
