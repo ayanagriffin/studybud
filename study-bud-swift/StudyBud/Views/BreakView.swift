@@ -2,6 +2,7 @@ import SwiftUI
 
 struct BreakView: View {
     let duration: CGFloat
+    @Binding var isActive: Bool
     @Environment(\.dismiss) private var dismiss
 
     @State private var showExitConfirm = false
@@ -65,7 +66,7 @@ struct BreakView: View {
             ) {
                 HStack(spacing: 24) {
                     Button("Yes") {
-                        dismiss()
+                        self.isActive = false
                     }
                     .font(.headline)
 
@@ -77,6 +78,16 @@ struct BreakView: View {
             }
         }
         .animation(.easeInOut, value: isBubbleVisible)
+        .onAppear {
+            let totalSeconds = Int(duration * 60)
+            print("Break starting — will dismiss in \(totalSeconds) seconds")
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {  // ← TEMP for fast testing
+                print("Timer fired, dismissing BreakView")
+                self.isActive = false
+            }
+        }
+
+
     }
 
     private func showRandomAffirmation() {
@@ -89,7 +100,6 @@ struct BreakView: View {
     }
 }
 
-
 #Preview {
-    BreakView(duration: 5)
+    BreakView(duration: 1, isActive: .constant(true))
 }

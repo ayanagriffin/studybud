@@ -5,11 +5,13 @@ enum EndSessionStep {
     case initial, chooseWorkDuration, chooseBreakDuration, confirmWorkStart 
 }
 
+
 class EndSessionViewModel: ObservableObject {
     @Published var step: EndSessionStep = .initial
     @Published var isWorkSessionActive = false
     @Published var isBreakActive = false
     @Published var duration: Int?
+    @Published var isSessionComplete = false
 
     var workSessionVM: WorkSessionViewModel?
     var breakDuration: Int?
