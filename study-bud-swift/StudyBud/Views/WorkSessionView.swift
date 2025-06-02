@@ -1,33 +1,73 @@
 import SwiftUI
+import Combine
+
 
 struct WorkSessionView: View {
     @StateObject var vm: WorkSessionViewModel
     @Environment(\.dismiss) private var dismiss
+    
+    // ── State for compact/full header ──
     @State private var isCompact = false
+    
+    // ── State for exit/pause dialogs ──
     @State private var showExitConfirm = false
     @State private var showPausedDialog = false
+    
+    // ── Navigation to end screen ──
     @State private var navigateToEnd = false
     
+    // ── NEW: State for chat bubble ──
+    @State private var showChatBubble = false
+    @State private var currentMotivation: String = ""
+    
+    // ── NEW: Timer cancellable ──
+    @State private var motivationTimerCancellable: Cancellable?
+    
+    // ── NEW: Array of motivational phrases ──
+    private let motivationalMessages: [String] = [
+        "You’ve got this! Keep focused.",
+        "One minute at a time!",
+        "Step by step!",
+        "Keep breathing. Keep going.",
+        "Your future self thanks you!"
+    ]
+    
+    // ── NEW: Interval in seconds (e.g. every 3 minutes = 180s) ──
+    private let intervalSeconds: TimeInterval = 5 * 60
     
     var body: some View {
         NavigationStack {
-            
             ZStack(alignment: .top) {
                 // ── 1) Full‑screen bedroom background ──
                 Image("bedroom")
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
+                    .onTapGesture {
+                        fireMotivationBubble()
+                    }
                 
-
                 // ── 2) Main content (character + buttons) ──
                 VStack {
                     Spacer()
-                    GIFImage(gifName: "BlueWorking")
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 200, height: 200)
-                        .rotationEffect(.degrees(14))
-                        .offset(x: 120, y: safeAreaTop() + 37)
+                    
+                    ZStack {
+                        // ── Character GIF ──
+                        GIFImage(gifName: "BlueWorking")
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 200, height: 200)
+                            .rotationEffect(.degrees(14))
+                            .offset(x: 120, y: safeAreaTop() + 37)
+                            
+                        
+                        // ── NEW: Chat bubble overlay ──
+                        if showChatBubble {
+                            ChatBubbleView(text: currentMotivation)
+                                .offset(x: 20, y: safeAreaTop() - 10)
+                                .transition(.opacity.combined(with: .scale))
+                                .zIndex(5) // Ensure it’s above the character
+                        }
+                    }
                     
                     Spacer()
                     
@@ -47,10 +87,8 @@ struct WorkSessionView: View {
                     }
                     .padding(.bottom, 120)
                 }
-                //.frame(maxWidth: .infinity, maxHeight: .infinity)
-                // No top padding here: headerView will overlay.
                 
-                // ── 3) Header (either full or compact) ──
+                // ── 3) Header (full or compact) ──
                 headerView
                     .fixedSize(horizontal: false, vertical: true)
                     .zIndex(1)
@@ -113,20 +151,35 @@ struct WorkSessionView: View {
                         }
                     }
                 }
-                
                 .zIndex(2)
             }
             // Hide the default back button if inside a NavigationStack
             .navigationBarBackButtonHidden(true)
+            .onAppear {
+                startMotivationTimer()
+            }
+            .onDisappear {
+                cancelMotivationTimer()
+            }
             .onChange(of: vm.isComplete) { complete in
                 if complete {
                     print("session completed")
                     navigateToEnd = true
+                    cancelMotivationTimer()
+                }
+            }
+            .onChange(of: vm.isPaused) { paused in
+                // If user pauses the session, also pause/hide the motivation bubble
+                if paused {
+                    hideChatBubbleImmediately()
+                    cancelMotivationTimer()
+                } else {
+                    // If user resumes, restart the motivation timer from scratch
+                    startMotivationTimer()
                 }
             }
         }
     }
-    
     
     // ── Header (full or compact) ──
     @ViewBuilder
@@ -218,7 +271,6 @@ struct WorkSessionView: View {
             
         }
     }
-    
     // ── Custom progress bar remains unchanged ──
     struct CustomProgressBar: View {
         let progress: Double
@@ -240,21 +292,75 @@ struct WorkSessionView: View {
     }
     
     // ── Utility to read the top safe‑area inset ──
-    private func safeAreaTop() -> CGFloat {
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .first?
-            .windows
-            .first { $0.isKeyWindow }?
-            .safeAreaInsets
-            .top ?? 0
+        private func safeAreaTop() -> CGFloat {
+            UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first?
+                .windows
+                .first { $0.isKeyWindow }?
+                .safeAreaInsets
+                .top ?? 0
+        }
+        
+        
+        // ── NEW: Start the Combine timer to fire every intervalSeconds ──
+        private func startMotivationTimer() {
+            // If there's already a timer active, cancel it first
+            motivationTimerCancellable?.cancel()
+            
+            // Only schedule if session is not complete or paused
+            guard !vm.isComplete, !vm.isPaused else { return }
+            
+            // Timer.publish(every:interval, on: .main, in: .common)
+            //   .autoconnect() produces a Publisher<Date, Never>
+            motivationTimerCancellable = Timer
+                .publish(every: intervalSeconds, on: .main, in: .common)
+                .autoconnect()
+                .sink { _ in
+                    fireMotivationBubble()
+                }
+        }
+        
+        // ── NEW: Cancel the timer if needed ──
+        private func cancelMotivationTimer() {
+            motivationTimerCancellable?.cancel()
+            motivationTimerCancellable = nil
+        }
+        
+        // ── NEW: When timer fires, pick a message & show bubble ──
+        private func fireMotivationBubble() {
+            print("firing motivation bubble")
+            // If already showing a bubble, just ignore this tick
+            guard !showChatBubble else { return }
+            
+            // Pick a random—or you can rotate—message
+            currentMotivation = motivationalMessages.randomElement() ?? ""
+            
+            withAnimation(.easeInOut(duration: 0.3)) {
+                showChatBubble = true
+            }
+            
+            // Hide the bubble after a short delay (e.g. 3s)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showChatBubble = false
+                }
+            }
+        }
+        
+        // ── NEW: Hide bubble immediately (e.g. on pause or exit) ──
+        private func hideChatBubbleImmediately() {
+            motivationTimerCancellable?.cancel()
+            withAnimation(.easeInOut(duration: 0.1)) {
+                showChatBubble = false
+            }
+        }
     }
-}
 
-struct WorkSessionView_Previews: PreviewProvider {
-    static var previews: some View {
-        WorkSessionView(
-            vm: WorkSessionViewModel(taskName: "Homework", durationMinutes: 3)
-        )
+    struct WorkSessionView_Previews: PreviewProvider {
+        static var previews: some View {
+            WorkSessionView(
+                vm: WorkSessionViewModel(taskName: "Homework", durationMinutes: 3)
+            )
+        }
     }
-}
