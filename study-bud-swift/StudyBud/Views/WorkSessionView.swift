@@ -44,7 +44,7 @@ struct WorkSessionView: View {
                         }
                     }
                 }
-                .padding(.bottom, 80)
+                .padding(.bottom, 120)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             // No top padding here: headerView will overlay.
@@ -71,7 +71,7 @@ struct WorkSessionView: View {
                             vm.exit()
                             dismiss()
                         }
-                        .font(.headline)
+                        .font(.buttonText)
                         .foregroundColor(.black)
                         .frame(minWidth: 120, minHeight: 44)
                         .background(Color.clear)
@@ -82,7 +82,7 @@ struct WorkSessionView: View {
                                 showExitConfirm = false
                             }
                         }
-                        .font(.headline)
+                        .font(.buttonText)
                         .foregroundColor(.black)
                         .frame(minWidth: 120, minHeight: 44)
                         .background(
@@ -103,7 +103,7 @@ struct WorkSessionView: View {
                 )
                 .frame(maxWidth: 400)
                 .padding(.horizontal, 24)
-                .padding(.top, safeAreaTop() + 100)
+                .padding(.top, safeAreaTop() + 200)
                 .zIndex(2)
             }
 
@@ -131,7 +131,7 @@ struct WorkSessionView: View {
                             showPausedDialog = false
                         }
                     }
-                    .font(.headline)
+                    .font(.buttonText)
                     .foregroundColor(.black)
                     .frame(width: 180, height: 44)
                     .background(
@@ -151,7 +151,7 @@ struct WorkSessionView: View {
                 )
                 .frame(maxWidth: 400)
                 .padding(.horizontal, 24)
-                .padding(.top, safeAreaTop() + 100)
+                .padding(.top, safeAreaTop() + 200)
                 .zIndex(2)
             }
         }

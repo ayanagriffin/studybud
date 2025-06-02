@@ -2,7 +2,7 @@
 //  PreSessionView.swift
 //  StudyBud
 //
-//  Created by You on 6/1/2025.
+//  Updated 6/2/2025 to support “onCommit” via Return key.
 //
 
 import SwiftUI
@@ -19,7 +19,7 @@ struct PreSessionView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // ── 1) Full‐screen landing background ──
+                // ── 1) Full‑screen landing background ──
                 Image("landing")
                     .resizable()
                     .scaledToFill()
@@ -49,13 +49,15 @@ struct PreSessionView: View {
                     // ── 2B) Speech bubble under the title ──
                     ChatBubbleView(text: vm.promptText, tailPosition: 0.7)
                         .frame(maxWidth: 300)
-                        .fixedSize()          // never stretch beyond its content
-                        .position(x: UIScreen.main.bounds.width * 0.55, // roughly centered under “Session Setup”
-                                  y: safeAreaTop() + 100)              // adjust 100 to taste
+                        .fixedSize()
+                        .position(
+                            x: UIScreen.main.bounds.width * 0.55,
+                            y: safeAreaTop() + 100
+                        )
 
                     Spacer().frame(height: 16)
 
-                    // ── 2C) Main below‐the‐bubble area ──
+                    // ── 2C) Main below‑the‑bubble area ──
                     Group {
                         switch vm.step {
                         case .chooseTask:
@@ -80,16 +82,16 @@ struct PreSessionView: View {
                 WorkSessionView(vm: vm.workVM!)
             }
             .onAppear {
-                // Make sure the nav bar background is clear so the bedroom image shows through
+                // Make sure the nav bar background is clear so the landing image shows through
                 UINavigationBar.appearance().barTintColor = .clear
 
-                // Ensure the “Say something else…” field is blank when this screen first appears
+                // Ensure the “Say something else…” field is blank on first appear
                 customTaskText = ""
             }
         }
     }
 
-    // MARK: – Subview for Step 1: Choose Task
+    // MARK: – Step 1: Choose Task
     private var chooseTaskSection: some View {
         VStack(spacing: 16) {
             // A) Two side‑by‑side yellow‑outlined ChoiceButton(s)
@@ -99,9 +101,8 @@ struct PreSessionView: View {
                     title: vm.taskOptions[0],
                     width: (UIScreen.main.bounds.width - 64) * 0.44
                 ) {
-                    // If the user taps “Homework,” write directly into vm.taskName
                     vm.taskName = vm.taskOptions[0]
-                    customTaskText = ""     // clear the custom field
+                    customTaskText = ""
                     vm.selectTask(vm.taskName)
                 }
 
@@ -118,11 +119,22 @@ struct PreSessionView: View {
             .padding(.horizontal, 24)
 
             // B) “Say something else…” text field with pencil icon
-            TextInput(text: $customTaskText, placeholder: "Say something else...")
+            TextInput(
+                text: $customTaskText,
+                placeholder: "Say something else…",
+                width: (UIScreen.main.bounds.width - 64) * 0.85,
+                onCommit: {
+                    // Trim whitespace; if not empty, set as vm.taskName and advance
+                    let trimmed = customTaskText.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !trimmed.isEmpty else { return }
+                    vm.taskName = trimmed
+                    vm.selectTask(vm.taskName)
+                }
+            )
         }
     }
 
-    // MARK: – Subview for Step 2: Choose Duration
+    // MARK: – Step 2: Choose Duration
     private var chooseDurationSection: some View {
         VStack(spacing: 16) {
             // A) Two side‑by‑side yellow‑outlined buttons for preset durations
@@ -146,11 +158,25 @@ struct PreSessionView: View {
             .padding(.horizontal, 24)
 
             // B) “Other amount…” text field with clock icon for custom duration
-            TextInput(text: $customDurationText, placeholder: "Other", width: 150)
+            TextInput(
+                text: $customDurationText,
+                placeholder: "Other (min)…",
+                width: (UIScreen.main.bounds.width - 64) * 0.6,
+                onCommit: {
+                    // Convert to Int; if valid, call selectDuration(_:)
+                    let filtered = customDurationText
+                        .trimmingCharacters(in: .whitespacesAndNewlines)
+                    if let minutes = Int(filtered), minutes > 0 {
+                        vm.selectDuration(minutes)
+                    }
+                }
+            )
+            // Force number pad so the user sees digits only:
+            .keyboardType(.numberPad)
         }
     }
 
-    // MARK: – Subview for Step 3: Confirm & Start
+    // MARK: – Step 3: Confirm & Start
     private var confirmSection: some View {
         VStack(spacing: 16) {
             if vm.isLoadingRecap {

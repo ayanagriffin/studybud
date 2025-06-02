@@ -35,7 +35,7 @@ class PreSessionViewModel: ObservableObject {
     @Published private(set) var durationPrompt: String = ""
 
     @Published var taskName: String = ""
-    @Published var duration: Int?
+    @Published var duration: Int = 0
     @Published var recapText: String?
     @Published var isLoadingRecap = false
 
@@ -73,7 +73,7 @@ class PreSessionViewModel: ObservableObject {
 
         case .confirm:
             // If recapText is nil, fall back to a generic string
-            return recapText ?? "Ready to rock?"
+            return recapText ?? "Let's get to work!"
         }
     }
 
@@ -119,6 +119,7 @@ class PreSessionViewModel: ObservableObject {
     }
 
     private func generateRecap() {
+        
 //        guard let dur = duration else { return }
 //        isLoadingRecap = true
 //
@@ -133,17 +134,18 @@ class PreSessionViewModel: ObservableObject {
 //                self.isLoadingRecap = false
 //            }
 //            .store(in: &cancellables)
+        self.recapText = "Ok! Let’s work on \(taskName) for \(duration) minutes!"
     }
 
     func confirmAndStart() {
-        guard let dur = duration else { return }
+        //guard let dur = duration else { return }
 
         // 1) Persist the session
-        let settings = SessionSettings(taskName: taskName, durationMinutes: dur)
+        let settings = SessionSettings(taskName: taskName, durationMinutes: duration)
         store.save(settings: settings)
 
         // 2) Kick off the WorkSessionViewModel
-        let sessionVM = WorkSessionViewModel(taskName: taskName, durationMinutes: dur)
+        let sessionVM = WorkSessionViewModel(taskName: taskName, durationMinutes: duration)
         self.workVM = sessionVM
 
         // 3) Trigger navigation in SwiftUI
