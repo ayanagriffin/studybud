@@ -81,15 +81,28 @@ struct PreSessionView: View {
 
                 // ── 3) If we’re in the middle of counting down, show a full‐screen overlay with big numbers ──
                 if isCountingDown {
+                    // 1) Semi‑transparent black overlay behind everything
                     Color.black.opacity(0.5)
                         .ignoresSafeArea()
 
-                    Text("\(countdownValue)")
-                        .font(.system(size: 128, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
-                        .transition(.opacity)
-                        .zIndex(1)
+                    // 2) The white circle with black stroke + black‑text numeral
+                    ZStack {
+                        Circle()
+                            .fill(Color.white)
+                            .frame(width: 140, height: 140)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.black, lineWidth: 4)
+                            )
+
+                        Text("\(countdownValue)")
+                            .font(.system(size: 72, weight: .bold, design: .rounded))
+                            .foregroundColor(.black)
+                    }
+                    .transition(.opacity)
+                    .zIndex(1)
                 }
+
             }
             // Hide SwiftUI’s default back button so only our custom BackArrow shows
             .navigationBarBackButtonHidden(true)
