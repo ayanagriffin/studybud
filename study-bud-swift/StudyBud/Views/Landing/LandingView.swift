@@ -1,3 +1,11 @@
+//
+//  LandingView.swift
+//  StudyBud
+//
+//  Created by Ayana Griffin on 6/2/25.
+//
+
+
 import SwiftUI
 
 struct LandingView: View {
