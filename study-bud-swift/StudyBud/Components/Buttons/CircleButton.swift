@@ -18,7 +18,7 @@ struct CircleButton: View {
                     .foregroundColor(.black)  // always black
 
                 Text(label)
-                    .font(.caption)
+                    .font(.buttonText)
                     .fontWeight(.semibold)
                     .foregroundColor(.black)
             }

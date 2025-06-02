@@ -2,7 +2,9 @@ import SwiftUI
 
 struct BreakView: View {
     let duration: CGFloat
+    @Environment(\.dismiss) private var dismiss
 
+    @State private var showExitConfirm = false
     @State private var currentAffirmation: String = ""
     @State private var isBubbleVisible: Bool = false
 
@@ -23,25 +25,55 @@ struct BreakView: View {
                 .ignoresSafeArea()
 
             VStack {
-                TimeProgressView()
+                BreakHeader(totalTime: duration)
                 Spacer()
 
-                if isBubbleVisible {
-                    ChatBubbleView(text: currentAffirmation)
-                        .padding(.top, 24)
-                        .transition(.opacity)
-                }
+                ZStack {
+                    Image("blue")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 200)
+                        .scaleEffect(x: -1, y: 1)
+                        .rotationEffect(.degrees(-40))
+                        .onTapGesture {
+                            showRandomAffirmation()
+                        }
 
-                Image("blue")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 200)
-                    .scaleEffect(x: -1, y: 1)
-                    .rotationEffect(.degrees(-40))
-                    .padding(.bottom, 110)
-                    .onTapGesture {
-                        showRandomAffirmation()
+                    if isBubbleVisible {
+                        ChatBubbleView(text: currentAffirmation)
+                            .offset(y: -180)
+                            .transition(.opacity)
                     }
+                }
+                .padding(.bottom, 110)
+            }
+
+            // End button pinned to bottom center
+            VStack {
+                Spacer()
+                CircleButton(iconName: "xmark", label: "End") {
+                    showExitConfirm = true
+                }
+                .padding(.bottom, 30)
+            }
+
+            // Exit confirmation dialog
+            DialogView(
+                isPresented: $showExitConfirm,
+                message: "Are you sure you want to end your break?",
+                characterImageName: "blue"
+            ) {
+                HStack(spacing: 24) {
+                    Button("Yes") {
+                        dismiss()
+                    }
+                    .font(.headline)
+
+                    Button("No") {
+                        showExitConfirm = false
+                    }
+                    .buttonStyle(YellowOutlinedButtonStyle())
+                }
             }
         }
         .animation(.easeInOut, value: isBubbleVisible)
@@ -57,6 +89,7 @@ struct BreakView: View {
     }
 }
 
-#Preview{
+
+#Preview {
     BreakView(duration: 5)
 }
