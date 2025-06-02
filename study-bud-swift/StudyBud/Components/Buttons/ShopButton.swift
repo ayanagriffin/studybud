@@ -1,4 +1,3 @@
-//
 //  ShopButton.swift
 //  StudyBud
 //
@@ -8,29 +7,20 @@
 import SwiftUI
 
 struct ShopButton: View {
-    var title: String
-    var action: () -> Void
-
     var body: some View {
-        Button(action: action) {
-            VStack(spacing: 2) {
+        NavigationLink(destination: ShopView()) {
                 Image(systemName: "bag.fill")
                     .resizable()
                     .scaledToFit()
                     .foregroundColor(.gray)
-                
-                Text(title)
-                    .font(.normalText)
-                    .foregroundColor(.black)
-            }
-            .padding(4)
+                    .frame(height: 24)  // adjust as needed
         }
-        .grayRectangleStyle()
+
     }
 }
 
 #Preview {
-    ShopButton(title: "Shop") {
-        print("Shop tapped")
+    NavigationStack {
+        ShopButton()
     }
 }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SettingsView: View {
+struct ShopView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -13,7 +13,7 @@ struct SettingsView: View {
                 
                 Spacer()
                 
-                Text("Settings")
+                Text("Shop")
                     .font(.mainHeader)
                     .foregroundColor(.black)
                 
@@ -22,7 +22,7 @@ struct SettingsView: View {
                 // Add a placeholder spacer so the title is centered
                 Spacer().frame(width: 44)
             }
-            
+            .padding(.horizontal, 16)
             Spacer()
             
 
@@ -33,11 +33,12 @@ struct SettingsView: View {
     
 }
 
-struct SettingsView_Previews: PreviewProvider {
+struct ShopView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            SettingsView()
+            ShopView()
         }
     }
 }
+
 

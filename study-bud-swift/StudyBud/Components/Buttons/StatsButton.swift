@@ -1,36 +1,25 @@
-//
-//  ShopButton.swift
-//  StudyBud
-//
-//  Created by Lauren Yu on 6/1/25.
-//
-
 import SwiftUI
 
 struct StatsButton: View {
-    var title: String
-    var action: () -> Void
-
+    
     var body: some View {
-        Button(action: action) {
+        // Instead of a Button, use a NavigationLink directly
+        NavigationLink(destination: StatsView()) {
             VStack(spacing: 1) {
                 Image(systemName: "chart.bar.fill")
                     .resizable()
                     .scaledToFit()
                     .foregroundColor(.gray)
-                
-                Text(title)
-                    .font(.normalText)
-                    .foregroundColor(.black)
+                    .frame(height: 24)      // adjust icon size as needed
             }
-            .padding(4)
+            .padding(8)
         }
-        .grayRectangleStyle()
     }
 }
 
 #Preview {
-    StatsButton(title: "Stats") {
-        print("Stats tapped")
+    NavigationStack {
+        StatsButton()
+            .padding()
     }
 }
