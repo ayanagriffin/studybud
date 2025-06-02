@@ -12,13 +12,13 @@ struct CircleButton: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 6) {
+            VStack(spacing: 2) {
                 Image(systemName: iconName)
-                    .font(.title2)
-                    .foregroundColor(.black)  // always black
+                    .font(.icon)
+                    .foregroundColor(.black)
 
                 Text(label)
-                    .font(.caption)
+                    .font(.circleButtonText)
                     .fontWeight(.semibold)
                     .foregroundColor(.black)
             }

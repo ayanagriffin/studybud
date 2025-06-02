@@ -4,22 +4,19 @@ struct ChoiceButton: View {
     let title: String
     let width: CGFloat?
     let verticalPadding: CGFloat
-    let horizontalPadding: CGFloat
     let fontWeight: Font.Weight
     let action: () -> Void
 
     init(
         title: String,
         width: CGFloat? = nil,
-        verticalPadding: CGFloat = 14,
-        horizontalPadding: CGFloat = 2,
+        verticalPadding: CGFloat = 12,
         fontWeight: Font.Weight = .medium,
         action: @escaping () -> Void
     ) {
         self.title = title
         self.width = width
-        self.verticalPadding = verticalPadding
-        self.horizontalPadding = horizontalPadding
+        self.verticalPadding = verticalPadding + 6
         self.fontWeight = fontWeight
         self.action = action
     }
@@ -31,7 +28,6 @@ struct ChoiceButton: View {
                 .foregroundColor(.black)
                 .frame(width: width)
                 .padding(.vertical, verticalPadding)
-                .padding(.horizontal, horizontalPadding)
         }
         .buttonStyle(YellowOutlinedButtonStyle())
     }

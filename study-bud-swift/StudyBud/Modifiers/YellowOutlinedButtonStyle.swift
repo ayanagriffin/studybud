@@ -13,12 +13,12 @@ import SwiftUI
 struct YellowOutlinedButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .background(Color("InputButtonFill"))
+            .background(Color("ButtonFill"))
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color("InputButtonOutline"), lineWidth: 8)
+                RoundedRectangle(cornerRadius: 30)
+                    .stroke(Color("ButtonOutline"), lineWidth: 8)
             )
-            .cornerRadius(20)
+            .cornerRadius(30)
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
     }
 }

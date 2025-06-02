@@ -9,7 +9,7 @@ struct TextInput: View {
         HStack(spacing: 8) {
             Image(systemName: "pencil")
                 .foregroundColor(.gray)
-                .font(.system(size: 18))
+                .font(.system(size: 20))
 
             TextField(placeholder, text: $text)
                 .keyboardType(.numberPad)
@@ -17,14 +17,14 @@ struct TextInput: View {
                 .foregroundColor(.black)
         }
         .padding(.horizontal, 12)
-        .frame(height: 44)
+        .frame(height: 48)
         .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color("InputButtonFill"))
+            RoundedRectangle(cornerRadius: 30)
+                .fill(Color("ButtonFill"))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color("InputButtonOutline"), lineWidth: 4)
+            RoundedRectangle(cornerRadius: 30)
+                .stroke(Color("ButtonOutline"), lineWidth: 4)
         )
         .frame(width: width ?? 280)
     }

@@ -2,7 +2,7 @@ import SwiftUI
 import Combine
 
 enum EndSessionStep {
-    case initial, chooseWorkDuration, chooseBreakDuration, confirmWorkStart 
+    case initial, chooseWorkDuration, chooseBreakDuration, confirmWorkStart // ✅ Added confirm step
 }
 
 class EndSessionViewModel: ObservableObject {
