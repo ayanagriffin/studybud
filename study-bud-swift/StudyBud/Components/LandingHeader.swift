@@ -14,7 +14,7 @@ struct LandingHeader: View {
                 HStack(spacing: 8) {
                     ShopButton(title: "Shop") { print("Shop tapped") }
                     StatsButton(title: "Stats") { print("Stats tapped") }
-                    SettingsButton { print("Settings tapped") }
+                    SettingsButton()
                 }
             }
             .padding(.horizontal, 20)
