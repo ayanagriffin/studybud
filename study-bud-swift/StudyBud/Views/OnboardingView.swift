@@ -434,7 +434,8 @@ private struct NameYourBudScreen: View {
                 Spacer()
             }
             .padding(.horizontal, 24)
-            
+            Spacer()
+
             if let imgName = selectedCharacter {
                 Image(imgName)
                     .resizable()
@@ -443,7 +444,6 @@ private struct NameYourBudScreen: View {
             }
             
             VStack(spacing: 8) {
-                Spacer()
                 Text("What do you want to name your StudyBud?")
                     .font(.buttonText)
                     .foregroundColor(.darkBrown)
