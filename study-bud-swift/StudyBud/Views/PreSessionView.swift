@@ -2,7 +2,7 @@
 //  PreSessionView.swift
 //  StudyBud
 //
-//  Updated 6/2/2025 to support “onCommit” via Return key.
+//  Added: 3–2–1 countdown before navigating to WorkSessionView.
 //
 
 import SwiftUI
@@ -11,10 +11,15 @@ struct PreSessionView: View {
     @StateObject private var vm = PreSessionViewModel()
     @Environment(\.dismiss) private var dismiss
 
-    // Local state for a custom task string (so placeholder shows immediately)
+    // Local state for a custom task string
     @State private var customTaskText: String = ""
+
     // Local state for a custom duration string
     @State private var customDurationText: String = ""
+
+    // MARK: Countdown‐related state
+    @State private var isCountingDown: Bool = false
+    @State private var countdownValue: Int = 3
 
     var body: some View {
         NavigationStack {
@@ -73,6 +78,31 @@ struct PreSessionView: View {
                     // Push this group downward so it sits above the home indicator
                     .padding(.bottom, safeAreaBottom() + 120)
                 }
+
+                // ── 3) If we’re in the middle of counting down, show a full‐screen overlay with big numbers ──
+                if isCountingDown {
+                    // 1) Semi‑transparent black overlay behind everything
+                    Color.black.opacity(0.5)
+                        .ignoresSafeArea()
+
+                    // 2) The white circle with black stroke + black‑text numeral
+                    ZStack {
+                        Circle()
+                            .fill(Color.white)
+                            .frame(width: 140, height: 140)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.black, lineWidth: 4)
+                            )
+
+                        Text("\(countdownValue)")
+                            .font(.system(size: 72, weight: .bold, design: .rounded))
+                            .foregroundColor(.black)
+                    }
+                    .transition(.opacity)
+                    .zIndex(1)
+                }
+
             }
             // Hide SwiftUI’s default back button so only our custom BackArrow shows
             .navigationBarBackButtonHidden(true)
@@ -85,7 +115,7 @@ struct PreSessionView: View {
                 // Make sure the nav bar background is clear so the landing image shows through
                 UINavigationBar.appearance().barTintColor = .clear
 
-                // Ensure the “Say something else…” field is blank on first appear
+                // Ensure the “Say something else…” field is blank on first appear
                 customTaskText = ""
             }
         }
@@ -122,15 +152,14 @@ struct PreSessionView: View {
             TextInput(
                 text: $customTaskText,
                 placeholder: "Say something else…",
-                width: (UIScreen.main.bounds.width - 64) * 0.85,
-                onCommit: {
-                    // Trim whitespace; if not empty, set as vm.taskName and advance
-                    let trimmed = customTaskText.trimmingCharacters(in: .whitespacesAndNewlines)
-                    guard !trimmed.isEmpty else { return }
-                    vm.taskName = trimmed
-                    vm.selectTask(vm.taskName)
-                }
-            )
+                width: (UIScreen.main.bounds.width - 64) * 0.85
+            ) {
+                // onCommit: if user presses Return after typing custom task
+                let trimmed = customTaskText.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !trimmed.isEmpty else { return }
+                vm.taskName = trimmed
+                vm.selectTask(vm.taskName)
+            }
         }
     }
 
@@ -161,22 +190,20 @@ struct PreSessionView: View {
             TextInput(
                 text: $customDurationText,
                 placeholder: "Other (min)…",
-                width: (UIScreen.main.bounds.width - 64) * 0.6,
-                onCommit: {
-                    // Convert to Int; if valid, call selectDuration(_:)
-                    let filtered = customDurationText
-                        .trimmingCharacters(in: .whitespacesAndNewlines)
-                    if let minutes = Int(filtered), minutes > 0 {
-                        vm.selectDuration(minutes)
-                    }
+                width: (UIScreen.main.bounds.width - 64) * 0.6
+            ) {
+                let filtered = customDurationText
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                if let minutes = Int(filtered), minutes > 0 {
+                    vm.selectDuration(minutes)
                 }
-            )
-            // Force number pad so the user sees digits only:
+            }
+            // Force number pad
             .keyboardType(.numberPad)
         }
     }
 
-    // MARK: – Step 3: Confirm & Start
+    // MARK: – Step 3: Confirm & Start (now triggers countdown)
     private var confirmSection: some View {
         VStack(spacing: 16) {
             if vm.isLoadingRecap {
@@ -187,12 +214,42 @@ struct PreSessionView: View {
                     .cornerRadius(20)
             } else {
                 ChoiceButton(
-                    title: "Let's Go!",
+                    title: "Let's Go!",
                     width: (UIScreen.main.bounds.width) * 0.5,
                     fontWeight: .semibold
                 ) {
-                    vm.confirmAndStart()
+                    // 1) Begin the 3–2–1 countdown
+                    startCountdown()
                 }
+            }
+        }
+    }
+
+    /// Called when user taps “Let's Go!” → starts showing “3”, then “2”, then “1”, then finally navigates.
+    private func startCountdown() {
+        isCountingDown = true
+        countdownValue = 3
+
+        // After 1 second, show “2”
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            withAnimation(.easeInOut) {
+                countdownValue = 2
+            }
+        }
+
+        // After 2 seconds, show “1”
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation(.easeInOut) {
+                countdownValue = 1
+            }
+        }
+
+        // After 3 seconds, end countdown and actually start the session:
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            withAnimation {
+                isCountingDown = false
+                // Now tell vm to actually create the WorkSessionViewModel and flip isSessionActive
+                vm.confirmAndStart()
             }
         }
     }
